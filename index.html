@@ -9,10 +9,8 @@
         * { -webkit-tap-highlight-color: transparent; touch-action: manipulation; box-sizing: border-box; }
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; font-family: sans-serif; color: white; }
         
-        /* POZADINA */
         .app-container { position: relative; width: 100%; height: 100vh; background-image: url('soba.jpg'); background-size: cover; background-position: center; }
         
-        /* PANEL SA TEKSTOM */
         .display-wall { position: absolute; top: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 320px; padding: 15px; background: rgba(0,0,0,0.9); backdrop-filter: blur(10px); border-radius: 20px; text-align: center; z-index: 10; border: 1px solid var(--accent); }
         .success-glow { border: 3px solid var(--success) !important; box-shadow: 0 0 30px var(--success); }
         
@@ -20,7 +18,6 @@
         .sentence { font-size: 22px; font-weight: bold; color: #fff; margin: 5px 0; text-transform: uppercase; }
         .live-translation { font-size: 15px; color: var(--success); font-style: italic; }
 
-        /* HOTSPOTOVI (NEVIDLJIVI KRUGOVI ZA KLIK) */
         .hotspot { position: absolute; width: 100px; height: 100px; z-index: 20; display: flex; align-items: center; justify-content: center; cursor: pointer; }
         .hotspot-circle { width: 40px; height: 40px; background: var(--danger); border-radius: 50%; opacity: 0.6; border: 2px solid #fff; pointer-events: none; }
         
@@ -28,13 +25,22 @@
         #spot-v { top: 35%; left: 45%; }
         #spot-n { top: 55%; left: 65%; }
 
-        /* EKRANI (OVERLAYS) */
         .overlay { position: fixed; inset: 0; background: #000; z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; }
-        .tutorial-box { max-width: 400px; width: 100%; padding: 20px; background: rgba(255,255,255,0.05); border-radius: 20px; text-align: left; }
         
+        /* NOVI STIL ZA TUTORIJAL DA BI TEKST STAO */
+        .tutorial-box { 
+            max-width: 450px; width: 100%; padding: 20px; 
+            background: rgba(255,255,255,0.05); border-radius: 20px; 
+            text-align: left; overflow-y: auto; max-height: 70vh;
+            scrollbar-width: thin; scrollbar-color: var(--accent) transparent;
+        }
+        .tutorial-box::-webkit-scrollbar { width: 4px; }
+        .tutorial-box::-webkit-scrollbar-thumb { background: var(--accent); }
+        .tutorial-box p { font-size: 14px; line-height: 1.5; margin-bottom: 15px; color: #ddd; }
+        .tutorial-box b { color: var(--accent); }
+
         .element-item { display: flex; align-items: center; gap: 15px; font-size: 20px; margin: 15px 0; background: rgba(255,255,255,0.1); padding: 12px; border-radius: 12px; width: 100%; max-width: 280px; }
-        
-        .start-btn { margin-top: 25px; padding: 20px 50px; background: var(--accent); border: none; border-radius: 50px; font-weight: bold; font-size: 16px; color: #000; cursor: pointer; }
+        .start-btn { margin-top: 25px; padding: 20px 50px; background: var(--accent); border: none; border-radius: 50px; font-weight: bold; font-size: 16px; color: #000; cursor: pointer; flex-shrink: 0; }
         .hidden { display: none !important; }
     </style>
 </head>
@@ -50,9 +56,20 @@
 
     <div id="step-2" class="overlay hidden">
         <div class="tutorial-box">
-            <h2 style="color:var(--accent)">LOGIKA UČENJA</h2>
-            <p>Povezujemo lokaciju sa gramatikom. Vrata su uvek akcija, ogledalo je osoba.</p>
-            <p>Klikći na crvene tačke u sobi. Slušaj izgovor i pokušaj da rešiš zadatak.</p>
+            <h2 style="color:var(--accent); margin-top:0;">Koja je logika ovog učenja?</h2>
+            <p>Logika se oslanja na <b>Prostornu mnemoniku (Loci metod)</b> i <b>Happy Accident</b> filozofiju:</p>
+            
+            <p><b>Povezivanje lokacije i funkcije:</b> Ljudski mozak mnogo lakše pamti gde se nešto nalazi nego suvu definiciju. Kada glagol povežeš sa vratima (koja predstavljaju akciju/prolaz), mozak stvara vizuelnu mapu.</p>
+            
+            <p><b>Eliminacija straha od greške:</b> U klasičnim aplikacijama dobiješ "X" kad pogrešiš. Ovde, svaka kombinacija je tačna i odmah prevedena. Korisnik ne "greši", on "istražuje" dok ne dođe do cilja.</p>
+            
+            <p><b>Audio-vizuelni fidbek:</b> Glas koji izgovara rečenicu pri svakom kliku fiksira pravilan izgovor u podsvest, dok zeleni prevod daje trenutnu sigurnost.</p>
+            
+            <p><b>Gledaj u prostor, ne u reči:</b> Obrati pažnju na to koji predmet u sobi menjaš. Kada klikneš na ogledalo, menjaš sebe (osobu). Kada klikneš na vrata, menjaš radnju. Doživi rečenicu kao fizički raspored u sobi.</p>
+            
+            <p><b>Slušaj i ponavljaj naglas:</b> Svaki put kad AI izgovori rečenicu, ponovi je. Čak i ako nije ona koju tražiš za zadatak, tvoj mozak je u tom trenutku "uslika".</p>
+            
+            <p><b>Uživaj u "slučajnim" rečenicama:</b> Nemoj žuriti. Klikći nasumično i prati kako se prevod menja. Najbolje ćeš naučiti upravo kroz te <b>Happy Accidents</b> dok istražuješ prostor.</p>
         </div>
         <button class="start-btn" style="background:var(--success)" onclick="startApp()">POČNI</button>
     </div>
@@ -107,12 +124,10 @@
             let p = db.p[state.p], v = db.v[state.v], n = db.n[state.n];
             let vE = v.e, vS = v.b;
 
-            // Srpski
             if(p.e === "I") vS += "m"; 
             else if(p.e === "You") vS += "š"; 
             else if(p.e === "They") vS = (vS==="ide"?"idu":vS+"u");
 
-            // Engleski
             if(p.e === "He" || p.e === "She") vE = (vE === "go" ? "goes" : vE + "s");
 
             document.getElementById('en').innerText = `${p.e} ${vE} ${n.e}`;
@@ -126,12 +141,9 @@
                 window.speechSynthesis.speak(u);
             }
 
-            // Provera
             if(state.p==goals[cur].r[0] && state.v==goals[cur].r[1] && state.n==goals[cur].r[2]) {
                 lock = true;
                 document.getElementById('panel').classList.add('success-glow');
-                
-                // Ping
                 if(audio) {
                     let o=audio.createOscillator(), g=audio.createGain();
                     o.connect(g); g.connect(audio.destination);
@@ -139,7 +151,6 @@
                     g.gain.setValueAtTime(0.1, audio.currentTime);
                     o.start(); o.stop(audio.currentTime+0.2);
                 }
-
                 setTimeout(() => {
                     lock = false;
                     cur = (cur + 1) % 5;
