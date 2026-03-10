@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Grammar Room</title>
+    <title>Grammar Room Engine</title>
     <style>
         :root { --accent: #00f2ff; --success: #00ff88; --danger: #ff0000; }
         * { -webkit-tap-highlight-color: transparent; touch-action: manipulation; box-sizing: border-box; }
@@ -11,11 +11,11 @@
         
         .app-container { position: relative; width: 100%; height: 100vh; background-image: url('soba.jpg'); background-size: cover; background-position: center; }
         
-        .display-wall { position: absolute; top: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 320px; padding: 15px; background: rgba(0,0,0,0.9); backdrop-filter: blur(10px); border-radius: 20px; text-align: center; z-index: 10; border: 1px solid var(--accent); }
+        .display-wall { position: absolute; top: 15px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 320px; padding: 12px; background: rgba(0,0,0,0.9); backdrop-filter: blur(10px); border-radius: 20px; text-align: center; z-index: 10; border: 1px solid var(--accent); }
         .success-glow { border: 3px solid var(--success) !important; box-shadow: 0 0 30px var(--success); }
         
         .instruction { font-size: 10px; color: var(--accent); letter-spacing: 2px; text-transform: uppercase; }
-        .sentence { font-size: 22px; font-weight: bold; color: #fff; margin: 5px 0; text-transform: uppercase; }
+        .sentence { font-size: 22px; font-weight: bold; color: #fff; margin: 4px 0; text-transform: uppercase; }
         .live-translation { font-size: 15px; color: var(--success); font-style: italic; }
 
         .hotspot { position: absolute; width: 100px; height: 100px; z-index: 20; display: flex; align-items: center; justify-content: center; cursor: pointer; }
@@ -27,41 +27,40 @@
 
         .overlay { position: fixed; inset: 0; background: #000; z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; }
         
-        /* NOVI STIL ZA TUTORIJAL DA BI TEKST STAO */
+        /* BOX ZA DUGAČAK TEKST */
         .tutorial-box { 
-            max-width: 450px; width: 100%; padding: 20px; 
-            background: rgba(255,255,255,0.05); border-radius: 20px; 
-            text-align: left; overflow-y: auto; max-height: 70vh;
-            scrollbar-width: thin; scrollbar-color: var(--accent) transparent;
+            max-width: 450px; width: 100%; padding: 25px; 
+            background: rgba(255,255,255,0.05); border-radius: 25px; 
+            text-align: left; overflow-y: scroll; max-height: 75vh;
+            border: 1px solid rgba(255,255,255,0.1);
         }
-        .tutorial-box::-webkit-scrollbar { width: 4px; }
-        .tutorial-box::-webkit-scrollbar-thumb { background: var(--accent); }
-        .tutorial-box p { font-size: 14px; line-height: 1.5; margin-bottom: 15px; color: #ddd; }
+        .tutorial-box h2 { color: var(--accent); font-size: 20px; margin-top: 0; }
+        .tutorial-box p { font-size: 14px; line-height: 1.6; margin-bottom: 18px; color: #eee; }
         .tutorial-box b { color: var(--accent); }
 
-        .element-item { display: flex; align-items: center; gap: 15px; font-size: 20px; margin: 15px 0; background: rgba(255,255,255,0.1); padding: 12px; border-radius: 12px; width: 100%; max-width: 280px; }
-        .start-btn { margin-top: 25px; padding: 20px 50px; background: var(--accent); border: none; border-radius: 50px; font-weight: bold; font-size: 16px; color: #000; cursor: pointer; flex-shrink: 0; }
+        .element-item { display: flex; align-items: center; gap: 15px; font-size: 18px; margin: 12px 0; background: rgba(255,255,255,0.1); padding: 12px; border-radius: 12px; width: 100%; max-width: 280px; }
+        .start-btn { margin-top: 20px; padding: 20px 50px; background: var(--accent); border: none; border-radius: 50px; font-weight: bold; font-size: 16px; color: #000; cursor: pointer; flex-shrink: 0; }
         .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
     <div id="step-1" class="overlay">
-        <h1 style="color:var(--accent); letter-spacing: 3px;">GRAMMAR ROOM</h1>
-        <div class="element-item"><span>🪞</span> <b>OGLEDALO</b> <span style="font-size:12px; margin-left:auto;">OSOBA</span></div>
-        <div class="element-item"><span>🚪</span> <b>VRATA</b> <span style="font-size:12px; margin-left:auto;">AKCIJA</span></div>
-        <div class="element-item"><span>🪴</span> <b>STO</b> <span style="font-size:12px; margin-left:auto;">PREDMET</span></div>
+        <h1 style="color:var(--accent); letter-spacing: 3px; font-size: 22px;">GRAMMAR ROOM</h1>
+        <div class="element-item"><span>🪞</span> <b>OGLEDALO</b> <span style="font-size:10px; margin-left:auto; opacity:0.7;">OSOBA</span></div>
+        <div class="element-item"><span>🚪</span> <b>VRATA</b> <span style="font-size:10px; margin-left:auto; opacity:0.7;">AKCIJA</span></div>
+        <div class="element-item"><span>🪴</span> <b>STO</b> <span style="font-size:10px; margin-left:auto; opacity:0.7;">PREDMET</span></div>
         <button class="start-btn" onclick="showStep(2)">DALJE</button>
     </div>
 
     <div id="step-2" class="overlay hidden">
         <div class="tutorial-box">
-            <h2 style="color:var(--accent); margin-top:0;">Koja je logika ovog učenja?</h2>
-            <p>Logika se oslanja na <b>Prostornu mnemoniku (Loci metod)</b> i <b>Happy Accident</b> filozofiju:</p>
+            <h2>Koja je logika ovog učenja?</h2>
+            <p>Logika se oslanja na <b>Prostornu mnemoniku (Loci metod)</b> i <b>Happy Accident filozofiju</b>:</p>
             
             <p><b>Povezivanje lokacije i funkcije:</b> Ljudski mozak mnogo lakše pamti gde se nešto nalazi nego suvu definiciju. Kada glagol povežeš sa vratima (koja predstavljaju akciju/prolaz), mozak stvara vizuelnu mapu.</p>
             
-            <p><b>Eliminacija straha od greške:</b> U klasičnim aplikacijama dobiješ "X" kad pogrešiš. Ovde, svaka kombinacija je tačna i odmah prevedena. Korisnik ne "greši", on "istražuje" dok ne dođe do cilja.</p>
+            <p><b>Eliminacija straha od greške:</b> U klasičnim aplikacijama dobiješ "X" kad pogrešiš. Kod tebe, svaka kombinacija je tačna i odmah prevedena. Korisnik ne "greši", on "istražuje" dok ne dođe do cilja.</p>
             
             <p><b>Audio-vizuelni fidbek:</b> Glas koji izgovara rečenicu pri svakom kliku fiksira pravilan izgovor u podsvest, dok zeleni prevod daje trenutnu sigurnost.</p>
             
@@ -69,15 +68,15 @@
             
             <p><b>Slušaj i ponavljaj naglas:</b> Svaki put kad AI izgovori rečenicu, ponovi je. Čak i ako nije ona koju tražiš za zadatak, tvoj mozak je u tom trenutku "uslika".</p>
             
-            <p><b>Uživaj u "slučajnim" rečenicama:</b> Nemoj žuriti. Klikći nasumično i prati kako se prevod menja. Najbolje ćeš naučiti upravo kroz te <b>Happy Accidents</b> dok istražuješ prostor.</p>
+            <p><b>Uživaj u "slučajnim" rečenicama:</b> Nemoj žuriti da rešiš zadatak. Klikći nasumično i prati kako se prevod menja. Najbolje ćeš naučiti upravo kroz te <b>"Happy Accidents"</b> dok istražuješ prostor.</p>
         </div>
-        <button class="start-btn" style="background:var(--success)" onclick="startApp()">POČNI</button>
+        <button class="start-btn" style="background:var(--success)" onclick="startApp()">POČNI TRENING</button>
     </div>
 
     <div class="app-container">
         <div id="panel" class="display-wall">
             <div id="m-text" class="instruction">ZADATAK</div>
-            <div id="en" class="sentence">Loding...</div>
+            <div id="en" class="sentence">...</div>
             <div id="sr" class="live-translation">...</div>
         </div>
         
@@ -127,7 +126,6 @@
             if(p.e === "I") vS += "m"; 
             else if(p.e === "You") vS += "š"; 
             else if(p.e === "They") vS = (vS==="ide"?"idu":vS+"u");
-
             if(p.e === "He" || p.e === "She") vE = (vE === "go" ? "goes" : vE + "s");
 
             document.getElementById('en').innerText = `${p.e} ${vE} ${n.e}`;
