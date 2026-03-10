@@ -22,27 +22,28 @@
         .score-pill { display: inline-block; margin-top: 5px; padding: 2px 8px; background: rgba(255,255,255,0.1); border-radius: 10px; font-size: 8px; color: rgba(255,255,255,0.5); }
 
         /* HOTSPOTS */
-        .hotspot { position: absolute; width: 60px; height: 60px; z-index: 5; cursor: pointer; }
+        .hotspot { position: absolute; width: 65px; height: 65px; z-index: 5; cursor: pointer; }
         .hotspot-circle { width: 100%; height: 100%; background: var(--danger); border-radius: 50%; opacity: 0.5; border: 2px solid #fff; animation: pulse-red 1.5s infinite; }
-        @keyframes pulse-red { 0% { transform: scale(0.9); } 70% { transform: scale(1.1); box-shadow: 0 0 20px 5px var(--danger); } 100% { transform: scale(0.9); } }
+        @keyframes pulse-red { 0% { transform: scale(0.9); } 70% { transform: scale(1.1); box-shadow: 0 0 25px 5px var(--danger); } 100% { transform: scale(0.9); } }
         
         #spot-ogledalo { top: 48%; left: 15%; }
         #spot-vrata    { top: 38%; left: 52%; }
         #spot-sto      { top: 55%; left: 75%; }
 
-        /* LUKSUZNI TUTORIJAL */
+        /* TUTORIJAL SA SKROLOM */
         .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.98); z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 25px; text-align: center; }
         .tutorial-scroll { 
-            max-width: 450px; width: 100%; max-height: 65vh; 
-            overflow-y: auto; text-align: left; padding-right: 15px;
-            scrollbar-width: thin; scrollbar-color: var(--accent) transparent;
+            max-width: 480px; width: 100%; max-height: 65vh; 
+            overflow-y: scroll; text-align: left; padding-right: 15px;
+            scrollbar-width: auto; scrollbar-color: var(--accent) rgba(255,255,255,0.1);
         }
-        .tutorial-scroll::-webkit-scrollbar { width: 3px; }
-        .tutorial-scroll::-webkit-scrollbar-thumb { background: var(--accent); }
+        .tutorial-scroll::-webkit-scrollbar { width: 6px; display: block; }
+        .tutorial-scroll::-webkit-scrollbar-track { background: rgba(255,255,255,0.1); border-radius: 10px; }
+        .tutorial-scroll::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
 
-        .tutorial-scroll h2 { color: var(--accent); font-size: 22px; margin-bottom: 20px; text-transform: uppercase; }
-        .tutorial-scroll h3 { color: #fff; font-size: 16px; margin-top: 25px; border-bottom: 1px solid rgba(0,242,255,0.2); }
-        .tutorial-scroll p { line-height: 1.7; color: #ccc; font-size: 15px; margin-bottom: 15px; }
+        .tutorial-scroll h2 { color: var(--accent); font-size: 20px; margin-bottom: 15px; }
+        .tutorial-scroll b { color: #fff; }
+        .tutorial-scroll p { line-height: 1.6; color: #ccc; font-size: 14px; margin-bottom: 12px; }
         
         .start-btn { margin-top: 25px; padding: 18px 50px; background: var(--accent); border: none; border-radius: 50px; font-weight: 900; text-transform: uppercase; cursor: pointer; color: #000; font-size: 13px; }
         .hidden { display: none !important; }
@@ -58,26 +59,25 @@
             <p>🚪 <b>Vrata</b> = Akcija</p>
             <p>🪴 <b>Sto</b> = Predmet</p>
         </div>
-        <button class="start-btn" onclick="nextStage(1)">ISTRAŽI LOGIKU</button>
+        <button class="start-btn" onclick="nextStage(1)">DALJE</button>
     </div>
 
     <div id="step-2" class="overlay hidden">
         <div class="tutorial-scroll">
             <h2>Koja je logika ovog učenja?</h2>
-            <p>Metoda se oslanja na <b>Prostornu mnemoniku</b> (Loci metod) i <b>Happy Accident</b> filozofiju:</p>
+            <p>Logika se oslanja na <b>Prostornu mnemoniku (Loci metod)</b> i <b>Happy Accident</b> filozofiju:</p>
             
-            <h3>Prostor umesto pravila</h3>
-            <p>Ljudski mozak pamti lokacije deset puta brže nego suve definicije. Kada glagol povežeš sa vratima (akcija), gradiš vizuelnu mapu znanja koja ostaje u podsvesti.</p>
+            <p>• <b>Povezivanje lokacije i funkcije:</b> Ljudski mozak mnogo lakše pamti gde se nešto nalazi nego suvu definiciju. Kada glagol povežeš sa vratima (koja predstavljaju akciju/prolaz), mozak stvara vizuelnu mapu.</p>
             
-            <h3>Eliminacija straha</h3>
-            <p>Kod nas nema greške. Svaka kombinacija koju napraviš je gramatički tačna i odmah prevedena. Ti ne učiš napamet, ti istražuješ prostor dok ne stigneš do cilja.</p>
+            <p>• <b>Eliminacija straha od greške:</b> U klasičnim aplikacijama dobiješ "X" kad pogrešiš. Kod tebe, svaka kombinacija je tačna i odmah prevedena. Korisnik ne "greši", on "istražuje" dok ne dođe do cilja.</p>
             
-            <h3>Audio-vizuelni kod</h3>
-            <p>AI glas fiksira pravilan izgovor, dok zeleni prevod daje trenutnu potvrdu. To je prirodan način učenja, sličan onom kako deca usvajaju jezik.</p>
+            <p>• <b>Audio-vizuelni fidbek:</b> Glas koji izgovara rečenicu pri svakom kliku fiksira pravilan izgovor u podsvest, dok zeleni prevod daje trenutnu sigurnost.</p>
 
-            <div style="background: rgba(0,255,136,0.05); border-left: 3px solid var(--success); padding: 15px; margin-top: 20px;">
-                <p style="margin:0; font-size:14px; color:#ddd;"><b>SAVET:</b> Gledaj u sobu, ne u reči. Ponovi svaku rečenicu naglas. Uživaj u istraživanju.</p>
-            </div>
+            <p><b>Gledaj u prostor, ne u reči:</b> Obrati pažnju na to koji predmet u sobi menjaš. Kada klikneš na ogledalo, menjaš sebe (osobu). Kada klikneš na vrata, menjaš radnju. Doživi rečenicu kao fizički raspored u sobi.</p>
+            
+            <p><b>Slušaj i ponavljaj naglas:</b> Svaki put kad AI izgovori rečenicu, ponovi je. Čak i ako nije ona koju tražiš za zadatak, tvoj mozak je u tom trenutku "uslika".</p>
+            
+            <p><b>Uživaj u "slučajnim" rečenicama:</b> Nemoj žuriti da rešiš zadatak. Klikći nasumično i prati kako se prevod menja. Najbolje ćeš naučiti upravo kroz te "Happy Accidents" dok istražuješ prostor.</p>
         </div>
         <button class="start-btn" style="background:var(--success)" onclick="startApp()">POČNI TRENING</button>
     </div>
@@ -100,32 +100,42 @@
             v: [{en:"go", base:"ide"}, {en:"make", base:"pravi"}, {en:"want", base:"želi"}, {en:"need", base:"treba"}, {en:"see", base:"vidi"}],
             n: [{en:"home", sr:"kući"}, {en:"history", sr:"istoriju"}, {en:"a choice", sr:"izbor"}, {en:"coffee", sr:"kafu"}, {en:"the world", sr:"svet"}]
         };
+
         const missions = [
-            {t:"On želi kafu", target:[2,2,3]}, {t:"Ja idem kući", target:[0,0,0]},
-            {t:"Ona treba svet", target:[3,3,4]}, {t:"Oni vide izbor", target:[4,4,2]},
-            {t:"Ti praviš istoriju", target:[1,1,1]}
+            {t:"Ja idem kući", target:[0,0,0]},
+            {t:"Ti praviš istoriju", target:[1,1,1]},
+            {t:"On želi kafu", target:[2,2,3]},
+            {t:"Oni vide izbor", target:[4,4,2]},
+            {t:"Ona treba svet", target:[3,3,4]}
         ];
+
         let currentIdx = 0, state = {p:0, v:0, n:0}, solved = 0, isCorrect = false;
 
         function nextStage(s) { document.getElementById('step-'+s).classList.add('hidden'); document.getElementById('step-'+(s+1)).classList.remove('hidden'); }
         function startApp() { document.getElementById('step-2').classList.add('hidden'); update(true); }
-        function cycle(part) { if(isCorrect) return; state[part] = (state[part] + 1) % data[part].length; update(false); }
-        function speak(t) { window.speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(t); u.lang='en-US'; window.speechSynthesis.speak(u); }
+        
+        function cycle(part) { 
+            if(isCorrect) return; 
+            state[part] = (state[part] + 1) % data[part].length; 
+            update(false); 
+        }
+
+        function speak(t) { 
+            window.speechSynthesis.cancel(); 
+            const u = new SpeechSynthesisUtterance(t); 
+            u.lang='en-US'; 
+            window.speechSynthesis.speak(u); 
+        }
 
         function update(silent) {
             let p = data.p[state.p], v = data.v[state.v], n = data.n[state.n];
             let vEn = v.en, vSr = v.base;
             
-            // GRAMATIČKA LOGIKA: Pametno prepoznavanje "kući"
-            if (n.en === "home") { 
-                vSr = "ide"; 
-                vEn = "go"; 
-            }
-
+            // GRAMATIČKA LOGIKA: Automatsko "ide" za kuću
+            if (n.en === "home") { vSr = "ide"; vEn = "go"; }
             if (p.en === "I") vSr += "m"; 
             else if (p.en === "You") vSr += "š"; 
             else if (p.en === "They") vSr = (vSr === "ide") ? "idu" : vSr + "u"; 
-            
             if (p.en === "He" || p.en === "She") vEn = (vEn === "go") ? "goes" : vEn + "s";
             
             const sent = `${p.en} ${vEn} ${n.en}`;
@@ -135,18 +145,28 @@
             
             if (!silent && !isCorrect) speak(sent);
             
+            // PROVERA ZADATKA
             if(state.p == missions[currentIdx].target[0] && state.v == missions[currentIdx].target[1] && state.n == missions[currentIdx].target[2]) {
                 isCorrect = true;
                 document.getElementById('output').classList.add('correct');
                 speak(sent);
+                
                 setTimeout(() => {
-                    isCorrect = false; solved++;
-                    if (solved < 5) currentIdx++;
-                    else { alert("Bravo! Arhitektura tvog znanja je spremna."); solved = 0; currentIdx = 0; }
+                    isCorrect = false; 
+                    solved++;
+                    if (solved < 5) {
+                        currentIdx++;
+                        // Resetujemo pozicije da ne bi odmah bio na rešenju
+                        state = {p:0, v:0, n:0}; 
+                    } else {
+                        alert("Svi moduli su uspešno instalirani. Samo prirodno.");
+                        solved = 0; currentIdx = 0;
+                        state = {p:0, v:0, n:0};
+                    }
                     document.getElementById('score').innerText = `REŠENO: ${solved}/5`;
                     document.getElementById('output').classList.remove('correct');
                     update(true); 
-                }, 1000);
+                }, 1200);
             }
         }
     </script>
