@@ -8,50 +8,27 @@
         :root { --accent: #00f2ff; --success: #00ff88; --danger: #ff0000; }
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; font-family: 'Inter', sans-serif; color: white; }
         .app-container { position: relative; width: 100%; height: 100vh; background-image: url('soba.jpg'); background-size: cover; background-position: center; }
-
-        .display-wall { 
-            position: absolute; top: 10px; left: 50%; transform: translateX(-50%); 
-            width: 88%; max-width: 320px; padding: 12px; 
-            background: rgba(0,0,0,0.85); backdrop-filter: blur(25px); 
-            border-radius: 18px; text-align: center; z-index: 10; 
-            border: 1px solid rgba(255,255,255,0.1); 
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        
-        .success-glow { 
-            background: rgba(0, 255, 136, 0.3) !important; 
-            border: 2px solid var(--success) !important;
-            box-shadow: 0 0 50px var(--success);
-            transform: translateX(-50%) scale(1.08) !important;
-        }
-
+        .display-wall { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); width: 88%; max-width: 320px; padding: 12px; background: rgba(0,0,0,0.85); backdrop-filter: blur(25px); border-radius: 18px; text-align: center; z-index: 10; border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .success-glow { background: rgba(0, 255, 136, 0.3) !important; border: 2px solid var(--success) !important; box-shadow: 0 0 50px var(--success); transform: translateX(-50%) scale(1.08) !important; }
         .instruction { font-size: 8px; color: var(--accent); text-transform: uppercase; letter-spacing: 2px; margin: 0; }
         .sentence { font-size: 20px; font-weight: 900; margin: 2px 0; color: #fff; text-transform: uppercase; }
         .live-translation { font-size: 13px; color: var(--success); font-style: italic; margin: 0; }
         .score-pill { display: inline-block; margin-top: 5px; padding: 2px 8px; background: rgba(255,255,255,0.1); border-radius: 10px; font-size: 8px; color: rgba(255,255,255,0.4); }
-
         .hotspot { position: absolute; width: 65px; height: 65px; z-index: 5; cursor: pointer; -webkit-tap-highlight-color: transparent; }
         .hotspot-circle { width: 100%; height: 100%; background: var(--danger); border-radius: 50%; opacity: 0.5; border: 2px solid #fff; animation: pulse-red 1.5s infinite; }
         @keyframes pulse-red { 0% { transform: scale(0.9); opacity: 0.4; } 70% { transform: scale(1.1); opacity: 0.7; box-shadow: 0 0 25px 5px var(--danger); } 100% { transform: scale(0.9); opacity: 0.4; } }
-        
         #spot-ogledalo { top: 48%; left: 15%; }
-        #spot-vrata    { top: 38%; left: 52%; }
-        #spot-sto      { top: 55%; left: 75%; }
-
+        #spot-vrata { top: 38%; left: 52%; }
+        #spot-sto { top: 55%; left: 75%; }
         .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.98); z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 25px; text-align: center; }
-        .tutorial-scroll { 
-            max-width: 480px; width: 100%; max-height: 60vh; 
-            overflow-y: auto; text-align: left; padding-right: 15px;
-            scrollbar-width: thin; scrollbar-color: var(--accent) transparent;
-        }
+        .tutorial-scroll { max-width: 480px; width: 100%; max-height: 60vh; overflow-y: auto; text-align: left; padding-right: 15px; scrollbar-width: thin; scrollbar-color: var(--accent) transparent; }
         .tutorial-scroll::-webkit-scrollbar { width: 4px; }
         .tutorial-scroll::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
-
         .tutorial-scroll h2 { color: var(--accent); font-size: 18px; margin-bottom: 15px; text-transform: uppercase; }
         .tutorial-scroll p { line-height: 1.6; color: #ccc; font-size: 14px; margin-bottom: 12px; }
-        
         .start-btn { margin-top: 25px; padding: 18px 50px; background: var(--accent); border: none; border-radius: 50px; font-weight: 900; text-transform: uppercase; cursor: pointer; color: #000; font-size: 13px; }
         .hidden { display: none !important; }
+        .correct { color: var(--success) !important; }
     </style>
 </head>
 <body>
@@ -96,7 +73,6 @@
             v: [{en:"go", base:"ide"}, {en:"make", base:"pravi"}, {en:"want", base:"želi"}, {en:"need", base:"treba"}, {en:"see", base:"vidi"}],
             n: [{en:"home", sr:"kući"}, {en:"history", sr:"istoriju"}, {en:"a choice", sr:"izbor"}, {en:"coffee", sr:"kafu"}, {en:"the world", sr:"svet"}]
         };
-
         const missions = [
             {t:"Ja idem kući", target:[0,0,0]},
             {t:"Ti praviš istoriju", target:[1,1,1]},
@@ -104,16 +80,13 @@
             {t:"Oni vide izbor", target:[4,4,2]},
             {t:"Ona treba svet", target:[3,3,4]}
         ];
-
-        let currentIdx = 0, state = {p:0, v:0, n:0}, solved = 0, isCorrect = false;
-        let audioCtx;
+        let currentIdx = 0, state = {p:0, v:0, n:0}, solved = 0, isCorrect = false, audioCtx;
 
         function initAudio() {
             audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             document.getElementById('step-2').classList.add('hidden');
             update(true);
         }
-
         function playPing() {
             if(!audioCtx) return;
             if (audioCtx.state === 'suspended') audioCtx.resume();
@@ -128,38 +101,29 @@
             osc.start();
             osc.stop(audioCtx.currentTime + 0.3);
         }
-
         function nextStage(s) { document.getElementById('step-'+s).classList.add('hidden'); document.getElementById('step-'+(s+1)).classList.remove('hidden'); }
         function cycle(part) { if(isCorrect) return; state[part] = (state[part] + 1) % data[part].length; update(false); }
         function speak(t) { window.speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(t); u.lang='en-US'; window.speechSynthesis.speak(u); }
 
         function update(silent) {
             let p = data.p[state.p];
-            let v = data.v[state.v]; // Ovde sada ispravno uzimamo glagol koji je korisnik izabrao
+            let v = data.v[state.v];
             let n = data.n[state.n];
 
             let vEnFinal = v.en;
             let vSrFinal = v.base;
 
-            // 1. INTELIGENTNA ZAMENA: Samo ako je izabrano "home", forsiramo "go"
-            // Ali ako NIJE "home", koristimo ono što je na vratima (make, want, need, see...)
-            if (n.en === "home") {
-                vEnFinal = "go";
-                vSrFinal = "ide";
-            }
+            // Korekcija za "home"
+            if (n.en === "home") { vEnFinal = "go"; vSrFinal = "ide"; }
 
-            // 2. SRPSKA KONJUGACIJA (Ja idem, Ti ideš, Oni idu...)
+            // Srpska gramatika
             if (p.en === "I") vSrFinal += "m"; 
             else if (p.en === "You") vSrFinal += "š"; 
-            else if (p.en === "They") {
-                if (vSrFinal === "ide") vSrFinal = "idu";
-                else vSrFinal += "u";
-            }
+            else if (p.en === "They") vSrFinal = (vSrFinal === "ide") ? "idu" : vSrFinal + "u"; 
             
-            // 3. ENGLESKA KONJUGACIJA (He goes, She wants, He needs...)
+            // Engleska gramatika
             if (p.en === "He" || p.en === "She") {
-                if (vEnFinal === "go") vEnFinal = "goes";
-                else vEnFinal += "s";
+                vEnFinal = (vEnFinal === "go") ? "goes" : vEnFinal + "s";
             }
             
             const sent = `${p.en} ${vEnFinal} ${n.en}`;
@@ -169,26 +133,22 @@
             
             if (!silent && !isCorrect) speak(sent);
             
-            // PROVERA POBEDE
             if(state.p == missions[currentIdx].target[0] && state.v == missions[currentIdx].target[1] && state.n == missions[currentIdx].target[2]) {
                 isCorrect = true;
                 playPing();
                 document.getElementById('main-panel').classList.add('success-glow');
                 speak(sent);
-                
                 setTimeout(() => {
                     isCorrect = false; 
                     solved++;
                     document.getElementById('main-panel').classList.remove('success-glow');
-                    if (solved < 5) {
-                        currentIdx++;
-                        state = {p:0, v:0, n:0}; 
-                    } else {
-                        alert("Gramatika prostora je savladana. Samo prirodno.");
-                        solved = 0; currentIdx = 0; state = {p:0, v:0, n:0};
-                    }
+                    if (solved < 5) { currentIdx++; state = {p:0, v:0, n:0}; }
+                    else { alert("Bravo! 'Samo prirodno' gramatika je usvojena."); solved = 0; currentIdx = 0; state = {p:0, v:0, n:0}; }
                     document.getElementById('score').innerText = `REŠENO: ${solved}/5`;
                     update(true); 
                 }, 1300);
             }
         }
+    </script>
+</body>
+</html>
