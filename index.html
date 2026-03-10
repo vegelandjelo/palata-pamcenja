@@ -135,27 +135,31 @@
 
         function update(silent) {
             let p = data.p[state.p];
-            let v = data.v[state.v];
+            let v = data.v[state.v]; // Ovde sada ispravno uzimamo glagol koji je korisnik izabrao
             let n = data.n[state.n];
 
-            // RESET LOGIKE NA SVAKI KLIK
             let vEnFinal = v.en;
             let vSrFinal = v.base;
 
-            // 1. Specijalni slučaj: "home" uvek povlači "ići"
+            // 1. INTELIGENTNA ZAMENA: Samo ako je izabrano "home", forsiramo "go"
+            // Ali ako NIJE "home", koristimo ono što je na vratima (make, want, need, see...)
             if (n.en === "home") {
                 vEnFinal = "go";
                 vSrFinal = "ide";
             }
 
-            // 2. Srpska konjugacija
+            // 2. SRPSKA KONJUGACIJA (Ja idem, Ti ideš, Oni idu...)
             if (p.en === "I") vSrFinal += "m"; 
             else if (p.en === "You") vSrFinal += "š"; 
-            else if (p.en === "They") vSrFinal = (vSrFinal === "ide") ? "idu" : vSrFinal + "u"; 
+            else if (p.en === "They") {
+                if (vSrFinal === "ide") vSrFinal = "idu";
+                else vSrFinal += "u";
+            }
             
-            // 3. Engleska konjugacija (3. lice jednine)
+            // 3. ENGLESKA KONJUGACIJA (He goes, She wants, He needs...)
             if (p.en === "He" || p.en === "She") {
-                vEnFinal = (vEnFinal === "go") ? "goes" : vEnFinal + "s";
+                if (vEnFinal === "go") vEnFinal = "goes";
+                else vEnFinal += "s";
             }
             
             const sent = `${p.en} ${vEnFinal} ${n.en}`;
@@ -180,7 +184,7 @@
                         currentIdx++;
                         state = {p:0, v:0, n:0}; 
                     } else {
-                        alert("Svi moduli instalirani. Bravo.");
+                        alert("Gramatika prostora je savladana. Samo prirodno.");
                         solved = 0; currentIdx = 0; state = {p:0, v:0, n:0};
                     }
                     document.getElementById('score').innerText = `REŠENO: ${solved}/5`;
@@ -188,6 +192,3 @@
                 }, 1300);
             }
         }
-    </script>
-</body>
-</html>
