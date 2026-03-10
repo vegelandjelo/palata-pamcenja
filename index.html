@@ -19,9 +19,9 @@
         }
         
         .success-glow { 
-            background: rgba(0, 255, 136, 0.2) !important; 
+            background: rgba(0, 255, 136, 0.3) !important; 
             border: 2px solid var(--success) !important;
-            box-shadow: 0 0 40px var(--success);
+            box-shadow: 0 0 50px var(--success);
             transform: translateX(-50%) scale(1.08) !important;
         }
 
@@ -52,7 +52,6 @@
         
         .start-btn { margin-top: 25px; padding: 18px 50px; background: var(--accent); border: none; border-radius: 50px; font-weight: 900; text-transform: uppercase; cursor: pointer; color: #000; font-size: 13px; }
         .hidden { display: none !important; }
-        .correct { color: var(--success) !important; }
     </style>
 </head>
 <body>
@@ -72,7 +71,7 @@
             <h2>Koja je logika ovog učenja?</h2>
             <p>Logika se oslanja na <b>Prostornu mnemoniku (Loci metod)</b> i <b>Happy Accident</b> filozofiju:</p>
             <p>• <b>Povezivanje lokacije i funkcije:</b> Ljudski mozak mnogo lakše pamti gde se nešto nalazi. Vrata predstavljaju akciju.</p>
-            <p>• <b>Eliminacija straha:</b> Svaka kombinacija je tačna i prevedena. Ti istražuješ dok ne dođeš do cilja.</p>
+            <p>• <b>Eliminacija straha:</b> Svaka kombinacija je tačna i prevedena. Ti istražuješ dok ne dođe do cilja.</p>
             <p>• <b>Audio-vizuelni fidbek:</b> Glas fiksira izgovor, dok zeleni prevod daje sigurnost.</p>
             <p><b>Gledaj u prostor:</b> Obrati pažnju na to koji predmet menjaš. <b>Slušaj i ponavljaj naglas:</b> Svaki put kad AI izgovori rečenicu, ponovi je.</p>
         </div>
@@ -84,4 +83,111 @@
             <div id="mission" class="instruction">ZADATAK</div>
             <div id="output" class="sentence">---</div>
             <div id="live-translation" class="live-translation">---</div>
-            <div id="score" class="score-
+            <div id="score" class="score-pill">REŠENO: 0/5</div>
+        </div>
+        <div id="spot-ogledalo" class="hotspot" onclick="cycle('p')"><div class="hotspot-circle"></div></div>
+        <div id="spot-vrata" class="hotspot" onclick="cycle('v')"><div class="hotspot-circle"></div></div>
+        <div id="spot-sto" class="hotspot" onclick="cycle('n')"><div class="hotspot-circle"></div></div>
+    </div>
+
+    <script>
+        const data = {
+            p: [{en:"I", sr:"Ja"}, {en:"You", sr:"Ti"}, {en:"He", sr:"On"}, {en:"She", sr:"Ona"}, {en:"They", sr:"Oni"}],
+            v: [{en:"go", base:"ide"}, {en:"make", base:"pravi"}, {en:"want", base:"želi"}, {en:"need", base:"treba"}, {en:"see", base:"vidi"}],
+            n: [{en:"home", sr:"kući"}, {en:"history", sr:"istoriju"}, {en:"a choice", sr:"izbor"}, {en:"coffee", sr:"kafu"}, {en:"the world", sr:"svet"}]
+        };
+
+        const missions = [
+            {t:"Ja idem kući", target:[0,0,0]},
+            {t:"Ti praviš istoriju", target:[1,1,1]},
+            {t:"On želi kafu", target:[2,2,3]},
+            {t:"Oni vide izbor", target:[4,4,2]},
+            {t:"Ona treba svet", target:[3,3,4]}
+        ];
+
+        let currentIdx = 0, state = {p:0, v:0, n:0}, solved = 0, isCorrect = false;
+        let audioCtx;
+
+        function initAudio() {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            document.getElementById('step-2').classList.add('hidden');
+            update(true);
+        }
+
+        function playPing() {
+            if(!audioCtx) return;
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.1);
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.3);
+        }
+
+        function nextStage(s) { document.getElementById('step-'+s).classList.add('hidden'); document.getElementById('step-'+(s+1)).classList.remove('hidden'); }
+        function cycle(part) { if(isCorrect) return; state[part] = (state[part] + 1) % data[part].length; update(false); }
+        function speak(t) { window.speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(t); u.lang='en-US'; window.speechSynthesis.speak(u); }
+
+        function update(silent) {
+            let p = data.p[state.p];
+            let v = data.v[state.v];
+            let n = data.n[state.n];
+
+            // RESET LOGIKE NA SVAKI KLIK
+            let vEnFinal = v.en;
+            let vSrFinal = v.base;
+
+            // 1. Specijalni slučaj: "home" uvek povlači "ići"
+            if (n.en === "home") {
+                vEnFinal = "go";
+                vSrFinal = "ide";
+            }
+
+            // 2. Srpska konjugacija
+            if (p.en === "I") vSrFinal += "m"; 
+            else if (p.en === "You") vSrFinal += "š"; 
+            else if (p.en === "They") vSrFinal = (vSrFinal === "ide") ? "idu" : vSrFinal + "u"; 
+            
+            // 3. Engleska konjugacija (3. lice jednine)
+            if (p.en === "He" || p.en === "She") {
+                vEnFinal = (vEnFinal === "go") ? "goes" : vEnFinal + "s";
+            }
+            
+            const sent = `${p.en} ${vEnFinal} ${n.en}`;
+            document.getElementById('output').innerText = sent;
+            document.getElementById('live-translation').innerText = `${p.sr} ${vSrFinal} ${n.sr}`;
+            document.getElementById('mission').innerText = `ZADATAK: ${missions[currentIdx].t}`;
+            
+            if (!silent && !isCorrect) speak(sent);
+            
+            // PROVERA POBEDE
+            if(state.p == missions[currentIdx].target[0] && state.v == missions[currentIdx].target[1] && state.n == missions[currentIdx].target[2]) {
+                isCorrect = true;
+                playPing();
+                document.getElementById('main-panel').classList.add('success-glow');
+                speak(sent);
+                
+                setTimeout(() => {
+                    isCorrect = false; 
+                    solved++;
+                    document.getElementById('main-panel').classList.remove('success-glow');
+                    if (solved < 5) {
+                        currentIdx++;
+                        state = {p:0, v:0, n:0}; 
+                    } else {
+                        alert("Svi moduli instalirani. Bravo.");
+                        solved = 0; currentIdx = 0; state = {p:0, v:0, n:0};
+                    }
+                    document.getElementById('score').innerText = `REŠENO: ${solved}/5`;
+                    update(true); 
+                }, 1300);
+            }
+        }
+    </script>
+</body>
+</html>
