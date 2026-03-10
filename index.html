@@ -8,34 +8,40 @@
         :root { --accent: #00f2ff; --success: #00ff88; --danger: #ff0000; }
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; font-family: 'Inter', sans-serif; color: white; }
         .app-container { position: relative; width: 100%; height: 100vh; background-image: url('soba.jpg'); background-size: cover; background-position: center; }
-        .display-wall { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); width: 88%; max-width: 320px; padding: 12px; background: rgba(0,0,0,0.85); backdrop-filter: blur(25px); border-radius: 18px; text-align: center; z-index: 10; border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .success-glow { background: rgba(0, 255, 136, 0.3) !important; border: 2px solid var(--success) !important; box-shadow: 0 0 50px var(--success); transform: translateX(-50%) scale(1.08) !important; }
+        
+        /* PANEL */
+        .display-wall { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); width: 88%; max-width: 320px; padding: 12px; background: rgba(0,0,0,0.85); backdrop-filter: blur(25px); border-radius: 18px; text-align: center; z-index: 10; border: 1px solid rgba(255,255,255,0.1); transition: 0.3s; }
+        .success-glow { background: rgba(0, 255, 136, 0.3) !important; border: 2px solid var(--success) !important; box-shadow: 0 0 50px var(--success); transform: translateX(-50%) scale(1.05) !important; }
+        
         .instruction { font-size: 8px; color: var(--accent); text-transform: uppercase; letter-spacing: 2px; margin: 0; }
         .sentence { font-size: 20px; font-weight: 900; margin: 2px 0; color: #fff; text-transform: uppercase; }
         .live-translation { font-size: 13px; color: var(--success); font-style: italic; margin: 0; }
         .score-pill { display: inline-block; margin-top: 5px; padding: 2px 8px; background: rgba(255,255,255,0.1); border-radius: 10px; font-size: 8px; color: rgba(255,255,255,0.4); }
-        .hotspot { position: absolute; width: 65px; height: 65px; z-index: 5; cursor: pointer; -webkit-tap-highlight-color: transparent; }
-        .hotspot-circle { width: 100%; height: 100%; background: var(--danger); border-radius: 50%; opacity: 0.5; border: 2px solid #fff; animation: pulse-red 1.5s infinite; }
-        @keyframes pulse-red { 0% { transform: scale(0.9); opacity: 0.4; } 70% { transform: scale(1.1); opacity: 0.7; box-shadow: 0 0 25px 5px var(--danger); } 100% { transform: scale(0.9); opacity: 0.4; } }
-        #spot-ogledalo { top: 48%; left: 15%; }
-        #spot-vrata { top: 38%; left: 52%; }
-        #spot-sto { top: 55%; left: 75%; }
+
+        /* HOTSPOTS */
+        .hotspot { position: absolute; width: 70px; height: 70px; z-index: 5; cursor: pointer; -webkit-tap-highlight-color: transparent; border-radius: 50%; }
+        .hotspot-circle { width: 100%; height: 100%; background: var(--danger); border-radius: 50%; opacity: 0.4; border: 2px solid #fff; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { transform: scale(0.9); opacity: 0.3; } 70% { transform: scale(1.1); opacity: 0.6; } 100% { transform: scale(0.9); opacity: 0.3; } }
+        
+        #spot-ogledalo { top: 45%; left: 12%; }
+        #spot-vrata { top: 35%; left: 50%; }
+        #spot-sto { top: 52%; left: 72%; }
+
+        /* OVERLAYS */
         .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.98); z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 25px; text-align: center; }
-        .tutorial-scroll { max-width: 480px; width: 100%; max-height: 60vh; overflow-y: auto; text-align: left; padding-right: 15px; scrollbar-width: thin; scrollbar-color: var(--accent) transparent; }
-        .tutorial-scroll::-webkit-scrollbar { width: 4px; }
-        .tutorial-scroll::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
-        .tutorial-scroll h2 { color: var(--accent); font-size: 18px; margin-bottom: 15px; text-transform: uppercase; }
-        .tutorial-scroll p { line-height: 1.6; color: #ccc; font-size: 14px; margin-bottom: 12px; }
+        .tutorial-box { max-width: 450px; width: 100%; max-height: 60vh; overflow-y: scroll; text-align: left; padding-right: 15px; border-right: 1px solid rgba(255,255,255,0.1); }
+        .tutorial-box::-webkit-scrollbar { width: 5px; }
+        .tutorial-box::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
+        
         .start-btn { margin-top: 25px; padding: 18px 50px; background: var(--accent); border: none; border-radius: 50px; font-weight: 900; text-transform: uppercase; cursor: pointer; color: #000; font-size: 13px; }
         .hidden { display: none !important; }
-        .correct { color: var(--success) !important; }
     </style>
 </head>
 <body>
 
     <div id="step-1" class="overlay">
         <h2 style="color:var(--accent); letter-spacing: 2px;">GRAMMAR ROOM</h2>
-        <div style="text-align: left; font-size: 18px; line-height: 2.2; margin-bottom: 20px;">
+        <div style="text-align: left; font-size: 18px; line-height: 2.5; margin-bottom: 20px;">
             <p>🪞 <b>Ogledalo</b> = Osoba</p>
             <p>🚪 <b>Vrata</b> = Akcija</p>
             <p>🪴 <b>Sto</b> = Predmet</p>
@@ -44,108 +50,107 @@
     </div>
 
     <div id="step-2" class="overlay hidden">
-        <div class="tutorial-scroll">
-            <h2>Koja je logika ovog učenja?</h2>
-            <p>Logika se oslanja na <b>Prostornu mnemoniku (Loci metod)</b> i <b>Happy Accident</b> filozofiju:</p>
-            <p>• <b>Povezivanje lokacije i funkcije:</b> Ljudski mozak mnogo lakše pamti gde se nešto nalazi. Vrata predstavljaju akciju.</p>
-            <p>• <b>Eliminacija straha:</b> Svaka kombinacija je tačna i prevedena. Ti istražuješ dok ne dođe do cilja.</p>
-            <p>• <b>Audio-vizuelni fidbek:</b> Glas fiksira izgovor, dok zeleni prevod daje sigurnost.</p>
-            <p><b>Gledaj u prostor:</b> Obrati pažnju na to koji predmet menjaš. <b>Slušaj i ponavljaj naglas:</b> Svaki put kad AI izgovori rečenicu, ponovi je.</p>
+        <div class="tutorial-box">
+            <h2 style="color:var(--accent)">Koja je logika?</h2>
+            <p>Logika se oslanja na <b>Prostornu mnemoniku</b> i <b>Happy Accident</b> filozofiju:</p>
+            <p>• <b>Lokacija i funkcija:</b> Vrata su uvek prolaz (akcija). Mozak to pamti bez truda.</p>
+            <p>• <b>Nema greške:</b> Svaki klik stvara tačnu rečenicu. Ti istražuješ prostor.</p>
+            <p>• <b>Audio-vizuelni kod:</b> Glas fiksira izgovor, zeleni tekst daje sigurnost.</p>
+            <p><b>Savet:</b> Gledaj u sobu, ne u reči. Slušaj i ponavljaj naglas. Uživaj u istraživanju.</p>
         </div>
-        <button class="start-btn" style="background:var(--success)" onclick="initAudio()">POČNI TRENING</button>
+        <button class="start-btn" style="background:var(--success)" onclick="initApp()">POČNI TRENING</button>
     </div>
 
     <div class="app-container">
         <div id="main-panel" class="display-wall">
-            <div id="mission" class="instruction">ZADATAK</div>
-            <div id="output" class="sentence">---</div>
-            <div id="live-translation" class="live-translation">---</div>
-            <div id="score" class="score-pill">REŠENO: 0/5</div>
+            <div id="mission-text" class="instruction">ZADATAK</div>
+            <div id="out-en" class="sentence">---</div>
+            <div id="out-sr" class="live-translation">---</div>
+            <div id="score-val" class="score-pill">REŠENO: 0/5</div>
         </div>
-        <div id="spot-ogledalo" class="hotspot" onclick="cycle('p')"><div class="hotspot-circle"></div></div>
-        <div id="spot-vrata" class="hotspot" onclick="cycle('v')"><div class="hotspot-circle"></div></div>
-        <div id="spot-sto" class="hotspot" onclick="cycle('n')"><div class="hotspot-circle"></div></div>
+        <div id="spot-ogledalo" class="hotspot" onclick="handleTap('p')"><div class="hotspot-circle"></div></div>
+        <div id="spot-vrata" class="hotspot" onclick="handleTap('v')"><div class="hotspot-circle"></div></div>
+        <div id="spot-sto" class="hotspot" onclick="handleTap('n')"><div class="hotspot-circle"></div></div>
     </div>
 
     <script>
-        const data = {
-            p: [{en:"I", sr:"Ja"}, {en:"You", sr:"Ti"}, {en:"He", sr:"On"}, {en:"She", sr:"Ona"}, {en:"They", sr:"Oni"}],
-            v: [{en:"go", base:"ide"}, {en:"make", base:"pravi"}, {en:"want", base:"želi"}, {en:"need", base:"treba"}, {en:"see", base:"vidi"}],
-            n: [{en:"home", sr:"kući"}, {en:"history", sr:"istoriju"}, {en:"a choice", sr:"izbor"}, {en:"coffee", sr:"kafu"}, {en:"the world", sr:"svet"}]
+        const db = {
+            p: [{e:"I", s:"Ja"}, {e:"You", s:"Ti"}, {e:"He", s:"On"}, {e:"She", s:"Ona"}, {e:"They", s:"Oni"}],
+            v: [{e:"go", b:"ide"}, {e:"make", b:"pravi"}, {e:"want", b:"želi"}, {e:"need", b:"treba"}, {e:"see", b:"vidi"}],
+            n: [{e:"home", s:"kući"}, {e:"history", s:"istoriju"}, {e:"a choice", s:"izbor"}, {e:"coffee", s:"kafu"}, {e:"the world", s:"svet"}]
         };
-        const missions = [
-            {t:"Ja idem kući", target:[0,0,0]},
-            {t:"Ti praviš istoriju", target:[1,1,1]},
-            {t:"On želi kafu", target:[2,2,3]},
-            {t:"Oni vide izbor", target:[4,4,2]},
-            {t:"Ona treba svet", target:[3,3,4]}
+
+        const goals = [
+            {t:"Ja idem kući", r:[0,0,0]}, {t:"Ti praviš istoriju", r:[1,1,1]},
+            {t:"On želi kafu", r:[2,2,3]}, {t:"Oni vide izbor", r:[4,4,2]},
+            {t:"Ona treba svet", r:[3,3,4]}
         ];
-        let currentIdx = 0, state = {p:0, v:0, n:0}, solved = 0, isCorrect = false, audioCtx;
 
-        function initAudio() {
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        let state = {p:0, v:0, n:0}, solved = 0, current = 0, isLock = false, audio;
+
+        function nextStage(n) { document.getElementById('step-'+n).classList.add('hidden'); document.getElementById('step-'+(n+1)).classList.remove('hidden'); }
+        
+        function initApp() {
+            audio = new (window.AudioContext || window.webkitAudioContext)();
             document.getElementById('step-2').classList.add('hidden');
-            update(true);
+            render(true);
         }
+
+        function handleTap(key) {
+            if(isLock) return;
+            state[key] = (state[key] + 1) % 5;
+            render(false);
+        }
+
         function playPing() {
-            if(!audioCtx) return;
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.frequency.setValueAtTime(600, audioCtx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.1);
-            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-            osc.start();
-            osc.stop(audioCtx.currentTime + 0.3);
+            if(!audio) return;
+            let o = audio.createOscillator(), g = audio.createGain();
+            o.connect(g); g.connect(audio.destination);
+            o.frequency.setValueAtTime(600, audio.currentTime);
+            o.frequency.exponentialRampToValueAtTime(1200, audio.currentTime + 0.1);
+            g.gain.setValueAtTime(0.1, audio.currentTime);
+            g.gain.exponentialRampToValueAtTime(0.01, audio.currentTime + 0.3);
+            o.start(); o.stop(audio.currentTime + 0.3);
         }
-        function nextStage(s) { document.getElementById('step-'+s).classList.add('hidden'); document.getElementById('step-'+(s+1)).classList.remove('hidden'); }
-        function cycle(part) { if(isCorrect) return; state[part] = (state[part] + 1) % data[part].length; update(false); }
-        function speak(t) { window.speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(t); u.lang='en-US'; window.speechSynthesis.speak(u); }
 
-        function update(silent) {
-            let p = data.p[state.p];
-            let v = data.v[state.v];
-            let n = data.n[state.n];
+        function render(silent) {
+            let p = db.p[state.p], v = db.v[state.v], n = db.n[state.n];
+            let vE = v.e, vS = v.b;
 
-            let vEnFinal = v.en;
-            let vSrFinal = v.base;
+            // Logika za kuću
+            if(n.e === "home") { vE = "go"; vS = "ide"; }
 
-            // Korekcija za "home"
-            if (n.en === "home") { vEnFinal = "go"; vSrFinal = "ide"; }
+            // SRB
+            if(p.e === "I") vS += "m"; 
+            else if(p.e === "You") vS += "š"; 
+            else if(p.e === "They") vS = (vS === "ide" ? "idu" : vS + "u");
 
-            // Srpska gramatika
-            if (p.en === "I") vSrFinal += "m"; 
-            else if (p.en === "You") vSrFinal += "š"; 
-            else if (p.en === "They") vSrFinal = (vSrFinal === "ide") ? "idu" : vSrFinal + "u"; 
-            
-            // Engleska gramatika
-            if (p.en === "He" || p.en === "She") {
-                vEnFinal = (vEnFinal === "go") ? "goes" : vEnFinal + "s";
+            // ENG
+            if(p.e === "He" || p.e === "She") vE = (vE === "go" ? "goes" : vE + "s");
+
+            let res = `${p.e} ${vE} ${n.e}`;
+            document.getElementById('out-en').innerText = res;
+            document.getElementById('out-sr').innerText = `${p.s} ${vS} ${n.s}`;
+            document.getElementById('mission-text').innerText = `ZADATAK: ${goals[current].t}`;
+
+            if(!silent && !isLock) {
+                window.speechSynthesis.cancel();
+                let u = new SpeechSynthesisUtterance(res); u.lang = 'en-US';
+                window.speechSynthesis.speak(u);
             }
-            
-            const sent = `${p.en} ${vEnFinal} ${n.en}`;
-            document.getElementById('output').innerText = sent;
-            document.getElementById('live-translation').innerText = `${p.sr} ${vSrFinal} ${n.sr}`;
-            document.getElementById('mission').innerText = `ZADATAK: ${missions[currentIdx].t}`;
-            
-            if (!silent && !isCorrect) speak(sent);
-            
-            if(state.p == missions[currentIdx].target[0] && state.v == missions[currentIdx].target[1] && state.n == missions[currentIdx].target[2]) {
-                isCorrect = true;
+
+            // PROVERA
+            if(state.p == goals[current].r[0] && state.v == goals[current].r[1] && state.n == goals[current].r[2]) {
+                isLock = true;
                 playPing();
                 document.getElementById('main-panel').classList.add('success-glow');
-                speak(sent);
                 setTimeout(() => {
-                    isCorrect = false; 
-                    solved++;
+                    isLock = false; solved++;
                     document.getElementById('main-panel').classList.remove('success-glow');
-                    if (solved < 5) { currentIdx++; state = {p:0, v:0, n:0}; }
-                    else { alert("Bravo! 'Samo prirodno' gramatika je usvojena."); solved = 0; currentIdx = 0; state = {p:0, v:0, n:0}; }
-                    document.getElementById('score').innerText = `REŠENO: ${solved}/5`;
-                    update(true); 
+                    if(solved < 5) { current++; state = {p:0,v:0,n:0}; }
+                    else { alert("Bravo! 'Samo prirodno' znanje instalirano."); solved=0; current=0; state={p:0,v:0,n:0}; }
+                    document.getElementById('score-val').innerText = `REŠENO: ${solved}/5`;
+                    render(true);
                 }, 1300);
             }
         }
