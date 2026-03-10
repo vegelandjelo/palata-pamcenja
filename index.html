@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Grammar Room Engine</title>
+    <style>
+        :root { --accent: #00f2ff; --success: #00ff88; --bg: #000; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: var(--bg); font-family: 'Inter', sans-serif; color: white; }
+        .app-container { position: relative; width: 100%; height: 100vh; background-image: url('soba.jpg'); background-size: cover; background-position: center; }
+
+        /* GLAVNI PANEL */
+        .display-wall { 
+            position: absolute; top: 30px; left: 50%; transform: translateX(-50%); 
+            width: 88%; max-width: 360px; padding: 20px; 
+            background: rgba(0,0,0,0.8); backdrop-filter: blur(30px); 
+            border-radius: 24px; text-align: center; z-index: 10; 
+            border: 1px solid rgba(255,255,255,0.1); 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+        .instruction { font-size: 10px; color: var(--accent); text-transform: uppercase; letter-spacing: 4px; margin-bottom: 8px; opacity: 0.8; }
+        .sentence { font-size: 24px; font-weight: 900; margin: 5px 0; color: #fff; text-transform: uppercase; letter-spacing: 1px; }
+        .live-translation { font-size: 15px; color: var(--success); font-style: italic; margin-top: 8px; font-weight: 400; }
+        .score-pill { display: inline-block; margin-top: 15px; padding: 4px 14px; background: rgba(255,255,255,0.05); border-radius: 20px; font-size: 10px; color: rgba(255,255,255,0.4); }
+
+        /* HOTSPOTS */
+        .hotspot { position: absolute; width: 70px; height: 70px; z-index: 5; cursor: pointer; }
+        .hotspot-circle { width: 100%; height: 100%; background: #fff; border-radius: 50%; opacity: 0.1; border: 1px solid white; animation: pulse 3s infinite; }
+        @keyframes pulse { 0% { transform: scale(0.85); opacity: 0.05; } 50% { transform: scale(1.1); opacity: 0.15; } 100% { transform: scale(0.85); opacity: 0.05; } }
+        
+        #spot-ogledalo { top: 48%; left: 15%; }
+        #spot-vrata    { top: 38%; left: 52%; }
+        #spot-sto      { top: 55%; left: 75%; }
+
+        /* OVERLAYS */
+        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.98); z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px; text-align: center; transition: 0.4s ease; }
+        .overlay h2 { color: var(--accent); font-size: 24px; font-weight: 900; margin-bottom: 25px; letter-spacing: 2px; }
+        
+        /* TUTORIAL SCROLL AREA */
+        .tutorial-content { 
+            max-width: 450px; width: 100%; max-height: 65vh; 
+            overflow-y: auto; text-align: left; padding-right: 15px;
+        }
+        .section-title { color: #fff; font-size: 18px; font-weight: 700; margin: 25px 0 10px 0; display: block; border-bottom: 1px solid rgba(0,242,255,0.2); padding-bottom: 5px; }
+        .tutorial-p { font-size: 15px; line-height: 1.7; color: #bbb; margin-bottom: 15px; }
+        .highlight { color: var(--accent); font-weight: 600; }
+        
+        .tip-box { background: rgba(0,255,136,0.05); border-left: 3px solid var(--success); padding: 15px; margin-top: 20px; border-radius: 0 12px 12px 0; }
+        .tip-box b { color: var(--success); display: block; margin-bottom: 5px; text-transform: uppercase; font-size: 12px; letter-spacing: 1px; }
+
+        .start-btn { margin-top: 30px; padding: 20px 60px; background: var(--accent); border: none; border-radius: 50px; font-weight: 900; text-transform: uppercase; cursor: pointer; color: #000; letter-spacing: 1px; transition: 0.3s; }
+        .start-btn:active { transform: scale(0.95); opacity: 0.8; }
+        .hidden { opacity: 0; pointer-events: none; display: none; }
+        .correct { color: var(--success) !important; text-shadow: 0 0 20px rgba(0,255,136,0.5); transition: 0.3s; }
+    </style>
+</head>
+<body>
+
+    <div id="step-1" class="overlay">
+        <h2>GRAMMAR ROOM</h2>
+        <p style="font-size: 16px; color: #888; margin-bottom: 30px;">Koncept: Prostor je tvoja gramatika.</p>
+        <div style="text-align: left; font-size: 20px; color: #fff; line-height: 2.5;">
+            <p>🪞 <b style="color:var(--accent)">Ogledalo</b> &nbsp;—&nbsp; Osoba</p>
+            <p>🚪 <b style="color:var(--accent)">Vrata</b> &nbsp;—&nbsp; Akcija</p>
+            <p>🪴 <b style="color:var(--accent)">Sto</b> &nbsp;—&nbsp; Predmet</p>
+        </div>
+        <button class="start-btn" onclick="next(1)">ISTRAŽI LOGIKU</button>
+    </div>
+
+    <div id="step-2" class="overlay hidden">
+        <div class="tutorial-content">
+            <span class="section-title">LOGIKA UČENJA</span>
+            <p class="tutorial-p">Metoda se bazira na <span class="highlight">Prostornoj mnemonici (Loci metod)</span> i <span class="highlight">Happy Accident</span> filozofiji:</p>
+            
+            <p class="tutorial-p"><b>Prostor umesto definicije:</b> Ljudski mozak pamti lokacije 10x bolje od suvih pravila. Povezivanjem glagola sa vratima, ti gradiš vizuelnu mapu znanja.</p>
+            
+            <p class="tutorial-p"><b>Sloboda istraživanja:</b> Ovde ne postoji "pogrešan" klik. Svaka kombinacija koju napraviš je tačna i odmah prevedena. Ti ne grešiš — ti otkrivaš.</p>
+            
+            <p class="tutorial-p"><b>Audio-vizuelni kod:</b> AI glas fiksira pravilan izgovor u tvoju podsvest, dok zeleni prevod daje trenutnu sigurnost i potvrdu.</p>
+
+            <div class="tip-box">
+                <b>Saveti za trening</b>
+                <p class="tutorial-p" style="margin:0; font-size:14px; color:#ddd;">
+                    • Gledaj u prostor, ne u reči.<br>
+                    • Ponavljaj svaku rečenicu naglas.<br>
+                    • Uživaj u slučajnim kombinacijama.
+                </p>
+            </div>
+        </div>
+        <button class="start-btn" style="background:var(--success);" onclick="startApp()">POČNI TRENING</button>
+    </div>
+
+    <div class="app-container">
+        <div class="display-wall">
+            <div id="mission" class="instruction">ZADATAK</div>
+            <div id="output" class="sentence">---</div>
+            <div id="live-translation" class="live-translation">---</div>
+            <div id="score" class="score-pill">REŠENO: 0/5</div>
+        </div>
+
+        <div id="spot-ogledalo" class="hotspot" onclick="cycle('p')"><div class="hotspot-circle"></div></div>
+        <div id="spot-vrata" class="hotspot" onclick="cycle('v')"><div class="hotspot-circle"></div></div>
+        <div id="spot-sto" class="hotspot" onclick="cycle('n')"><div class="hotspot-circle"></div></div>
+    </div>
+
+    <script>
+        const data = {
+            p: [{en:"I", sr:"Ja"}, {en:"You", sr:"Ti"}, {en:"He", sr:"On"}, {en:"She", sr:"Ona"}, {en:"They", sr:"Oni"}],
+            v: [{en:"go", base:"ide"}, {en:"make", base:"pravi"}, {en:"want", base:"želi"}, {en:"need", base:"treba"}, {en:"see", base:"vidi"}],
+            n: [{en:"home", sr:"kući"}, {en:"history", sr:"istoriju"}, {en:"a choice", sr:"izbor"}, {en:"coffee", sr:"kafu"}, {en:"the world", sr:"svet"}]
+        };
+
+        const missions = [
+            {t:"On želi kafu", target:[2,2,3]},
+            {t:"Ja idem kući", target:[0,0,0]},
+            {t:"Ona treba svet", target:[3,3,4]},
+            {t:"Oni vide izbor", target:[4,4,2]},
+            {t:"Ti praviš istoriju", target:[1,1,1]}
+        ];
+
+        let currentIdx = 0, state = {p:0, v:0, n:0}, solved = 0, isCorrect = false;
+
+        function next(step) {
+            document.getElementById('step-' + step).classList.add('hidden');
+            document.getElementById('step-' + (step + 1)).classList.remove('hidden');
+        }
+
+        function startApp() {
+            document.getElementById('step-2').classList.add('hidden');
+            update(true);
+        }
+
+        function cycle(part) {
+            if(isCorrect) return;
+            state[part] = (state[part] + 1) % data[part].length;
+            update(false);
+        }
+
+        function speak(text) {
+            window.speechSynthesis.cancel();
+            const ut = new SpeechSynthesisUtterance(text);
+            ut.lang = 'en-US';
+            ut.rate = 0.95;
+            window.speechSynthesis.speak(ut);
+        }
+
+        function update(silent) {
+            let p = data.p[state.p], v = data.v[state.v], n = data.n[state.n];
+            let vEn = v.en, vSr = v.base;
+
+            if (n.en === "home") { vSr = "ide"; vEn = "go"; }
+            if (p.en === "I") vSr += "m";
+            else if (p.en === "You") vSr += "š";
+            else if (p.en === "They") vSr = (vSr === "ide") ? "idu" : vSr + "u"; 
+            if (p.en === "He" || p.en === "She") vEn = (vEn === "go") ? "goes" : vEn + "s";
+
+            const sentence = `${p.en} ${vEn} ${n.en}`;
+            document.getElementById('output').innerText = sentence;
+            document.getElementById('live-translation').innerText = `${p.sr} ${vSr} ${n.sr}`;
+            document.getElementById('mission').innerText = `ZADATAK: ${missions[currentIdx].t}`;
+
+            if (!silent && !isCorrect) speak(sentence);
+
+            if(state.p == missions[currentIdx].target[0] && state.v == missions[currentIdx].target[1] && state.n == missions[currentIdx].target[2]) {
+                isCorrect = true;
+                document.getElementById('output').classList.add('correct');
+                speak(sentence);
+                
+                // BRZI PRELAZ NA NOVI ZADATAK
+                setTimeout(() => {
+                    isCorrect = false;
+                    solved++;
+                    if (solved < 5) {
+                        currentIdx++;
+                    } else {
+                        alert("Arhitektura tvog znanja je kompletirana. Samo prirodno.");
+                        solved = 0; currentIdx = 0;
+                    }
+                    document.getElementById('score').innerText = `REŠENO: ${solved}/5`;
+                    document.getElementById('output').classList.remove('correct');
+                    update(true); 
+                }, 1000); 
+            }
+        }
+    </script>
+</body>
+</html>
