@@ -9,13 +9,24 @@
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; font-family: 'Inter', sans-serif; color: white; }
         .app-container { position: relative; width: 100%; height: 100vh; background-image: url('soba.jpg'); background-size: cover; background-position: center; }
 
-        /* HEADER */
+        /* HEADER PANEL */
         .display-wall { 
             position: absolute; top: 10px; left: 50%; transform: translateX(-50%); 
             width: 88%; max-width: 320px; padding: 12px; 
             background: rgba(0,0,0,0.85); backdrop-filter: blur(25px); 
-            border-radius: 18px; text-align: center; z-index: 10; border: 1px solid rgba(255,255,255,0.1); 
+            border-radius: 18px; text-align: center; z-index: 10; 
+            border: 1px solid rgba(255,255,255,0.1); 
+            transition: all 0.3s ease;
         }
+        
+        /* EFEKAT USPEHA ZA PANEL */
+        .success-glow { 
+            background: rgba(0, 255, 136, 0.2) !important; 
+            border: 2px solid var(--success) !important;
+            box-shadow: 0 0 30px var(--success);
+            transform: translateX(-50%) scale(1.05) !important;
+        }
+
         .instruction { font-size: 8px; color: var(--accent); text-transform: uppercase; letter-spacing: 2px; margin: 0; }
         .sentence { font-size: 20px; font-weight: 900; margin: 2px 0; color: #fff; text-transform: uppercase; }
         .live-translation { font-size: 13px; color: var(--success); font-style: italic; margin: 0; }
@@ -30,7 +41,7 @@
         #spot-vrata    { top: 38%; left: 52%; }
         #spot-sto      { top: 55%; left: 75%; }
 
-        /* TUTORIJAL SA SKROLOM */
+        /* TUTORIJAL */
         .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.98); z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 25px; text-align: center; }
         .tutorial-scroll { 
             max-width: 480px; width: 100%; max-height: 65vh; 
@@ -42,7 +53,6 @@
         .tutorial-scroll::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
 
         .tutorial-scroll h2 { color: var(--accent); font-size: 20px; margin-bottom: 15px; }
-        .tutorial-scroll b { color: #fff; }
         .tutorial-scroll p { line-height: 1.6; color: #ccc; font-size: 14px; margin-bottom: 12px; }
         
         .start-btn { margin-top: 25px; padding: 18px 50px; background: var(--accent); border: none; border-radius: 50px; font-weight: 900; text-transform: uppercase; cursor: pointer; color: #000; font-size: 13px; }
@@ -66,24 +76,18 @@
         <div class="tutorial-scroll">
             <h2>Koja je logika ovog učenja?</h2>
             <p>Logika se oslanja na <b>Prostornu mnemoniku (Loci metod)</b> i <b>Happy Accident</b> filozofiju:</p>
-            
-            <p>• <b>Povezivanje lokacije i funkcije:</b> Ljudski mozak mnogo lakše pamti gde se nešto nalazi nego suvu definiciju. Kada glagol povežeš sa vratima (koja predstavljaju akciju/prolaz), mozak stvara vizuelnu mapu.</p>
-            
-            <p>• <b>Eliminacija straha od greške:</b> U klasičnim aplikacijama dobiješ "X" kad pogrešiš. Kod tebe, svaka kombinacija je tačna i odmah prevedena. Korisnik ne "greši", on "istražuje" dok ne dođe do cilja.</p>
-            
-            <p>• <b>Audio-vizuelni fidbek:</b> Glas koji izgovara rečenicu pri svakom kliku fiksira pravilan izgovor u podsvest, dok zeleni prevod daje trenutnu sigurnost.</p>
-
-            <p><b>Gledaj u prostor, ne u reči:</b> Obrati pažnju na to koji predmet u sobi menjaš. Kada klikneš na ogledalo, menjaš sebe (osobu). Kada klikneš na vrata, menjaš radnju. Doživi rečenicu kao fizički raspored u sobi.</p>
-            
-            <p><b>Slušaj i ponavljaj naglas:</b> Svaki put kad AI izgovori rečenicu, ponovi je. Čak i ako nije ona koju tražiš za zadatak, tvoj mozak je u tom trenutku "uslika".</p>
-            
-            <p><b>Uživaj u "slučajnim" rečenicama:</b> Nemoj žuriti da rešiš zadatak. Klikći nasumično i prati kako se prevod menja. Najbolje ćeš naučiti upravo kroz te "Happy Accidents" dok istražuješ prostor.</p>
+            <p>• <b>Povezivanje lokacije i funkcije:</b> Ljudski mozak mnogo lakše pamti gde se nešto nalazi nego suvu definiciju. Kada glagol povežeš sa vratima (akcija), mozak stvara vizuelnu mapu.</p>
+            <p>• <b>Eliminacija straha od greške:</b> Ovde svaka kombinacija koju napraviš je tačna i odmah prevedena. Korisnik ne "greši", on "istražuje" dok ne dođe do cilja.</p>
+            <p>• <b>Audio-vizuelni fidbek:</b> Glas fiksira izgovor u podsvest, dok zeleni prevod daje trenutnu sigurnost.</p>
+            <p><b>Gledaj u prostor, ne u reči:</b> Obrati pažnju na to koji predmet u sobi menjaš. Kada klikneš na ogledalo, menjaš sebe. Kada klikneš na vrata, menjaš radnju.</p>
+            <p><b>Slušaj i ponavljaj naglas:</b> Svaki put kad AI izgovori rečenicu, ponovi je. Tvoj mozak je u tom trenutku "uslika".</p>
+            <p><b>Uživaj u "slučajnim" rečenicama:</b> Klikći nasumično i prati kako se prevod menja. Najbolje ćeš naučiti upravo kroz te "Happy Accidents".</p>
         </div>
         <button class="start-btn" style="background:var(--success)" onclick="startApp()">POČNI TRENING</button>
     </div>
 
     <div class="app-container">
-        <div class="display-wall">
+        <div id="main-panel" class="display-wall">
             <div id="mission" class="instruction">ZADATAK</div>
             <div id="output" class="sentence">---</div>
             <div id="live-translation" class="live-translation">---</div>
@@ -110,32 +114,32 @@
         ];
 
         let currentIdx = 0, state = {p:0, v:0, n:0}, solved = 0, isCorrect = false;
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSuccessSound() {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(440, audioCtx.currentTime); // A4
+            osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.1); // A5
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.3);
+        }
 
         function nextStage(s) { document.getElementById('step-'+s).classList.add('hidden'); document.getElementById('step-'+(s+1)).classList.remove('hidden'); }
         function startApp() { document.getElementById('step-2').classList.add('hidden'); update(true); }
-        
-        function cycle(part) { 
-            if(isCorrect) return; 
-            state[part] = (state[part] + 1) % data[part].length; 
-            update(false); 
-        }
-
-        function speak(t) { 
-            window.speechSynthesis.cancel(); 
-            const u = new SpeechSynthesisUtterance(t); 
-            u.lang='en-US'; 
-            window.speechSynthesis.speak(u); 
-        }
+        function cycle(part) { if(isCorrect) return; state[part] = (state[part] + 1) % data[part].length; update(false); }
+        function speak(t) { window.speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(t); u.lang='en-US'; window.speechSynthesis.speak(u); }
 
         function update(silent) {
             let p = data.p[state.p], v = data.v[state.v], n = data.n[state.n];
             let vEn = v.en, vSr = v.base;
-            
-            // GRAMATIČKA LOGIKA: Automatsko "ide" za kuću
             if (n.en === "home") { vSr = "ide"; vEn = "go"; }
-            if (p.en === "I") vSr += "m"; 
-            else if (p.en === "You") vSr += "š"; 
-            else if (p.en === "They") vSr = (vSr === "ide") ? "idu" : vSr + "u"; 
+            if (p.en === "I") vSr += "m"; else if (p.en === "You") vSr += "š"; else if (p.en === "They") vSr = (vSr === "ide") ? "idu" : vSr + "u"; 
             if (p.en === "He" || p.en === "She") vEn = (vEn === "go") ? "goes" : vEn + "s";
             
             const sent = `${p.en} ${vEn} ${n.en}`;
@@ -145,26 +149,25 @@
             
             if (!silent && !isCorrect) speak(sent);
             
-            // PROVERA ZADATKA
             if(state.p == missions[currentIdx].target[0] && state.v == missions[currentIdx].target[1] && state.n == missions[currentIdx].target[2]) {
                 isCorrect = true;
-                document.getElementById('output').classList.add('correct');
+                const panel = document.getElementById('main-panel');
+                panel.classList.add('success-glow'); // Sjaj panela
+                playSuccessSound(); // Zvučni signal
                 speak(sent);
                 
                 setTimeout(() => {
                     isCorrect = false; 
                     solved++;
+                    panel.classList.remove('success-glow');
                     if (solved < 5) {
                         currentIdx++;
-                        // Resetujemo pozicije da ne bi odmah bio na rešenju
                         state = {p:0, v:0, n:0}; 
                     } else {
-                        alert("Svi moduli su uspešno instalirani. Samo prirodno.");
-                        solved = 0; currentIdx = 0;
-                        state = {p:0, v:0, n:0};
+                        alert("Gramatika prostora je savladana.");
+                        solved = 0; currentIdx = 0; state = {p:0, v:0, n:0};
                     }
                     document.getElementById('score').innerText = `REŠENO: ${solved}/5`;
-                    document.getElementById('output').classList.remove('correct');
                     update(true); 
                 }, 1200);
             }
