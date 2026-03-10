@@ -27,13 +27,7 @@
         #spot-n { top: 55%; left: 65%; }
 
         .overlay { position: fixed; inset: 0; background: #000; z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; }
-        
-        .tutorial-box { 
-            max-width: 450px; width: 100%; padding: 25px; 
-            background: rgba(255,255,255,0.05); border-radius: 25px; 
-            text-align: left; overflow-y: scroll; max-height: 75vh;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
+        .tutorial-box { max-width: 450px; width: 100%; padding: 25px; background: rgba(255,255,255,0.05); border-radius: 25px; text-align: left; overflow-y: scroll; max-height: 75vh; border: 1px solid rgba(255,255,255,0.1); }
         .tutorial-box h2 { color: var(--accent); font-size: 20px; margin-top: 0; }
         .tutorial-box p { font-size: 14px; line-height: 1.6; margin-bottom: 18px; color: #eee; }
         .tutorial-box b { color: var(--accent); }
@@ -57,7 +51,117 @@
         <div class="tutorial-box">
             <h2>Koja je logika ovog učenja?</h2>
             <p>Logika se oslanja na <b>Prostornu mnemoniku (Loci metod)</b> i <b>Happy Accident filozofiju</b>:</p>
-            <p><b>Povezivanje lokacije i funkcije:</b> Ljudski mozak lakše pamti gde se nešto nalazi. Kada glagol povežeš sa vratima, mozak stvara vizuelnu mapu.</p>
+            <p><b>Povezivanje lokacije i funkcije:</b> Ljudski mozak mnogo lakše pamti gde se nešto nalazi. Kada glagol povežeš sa vratima, mozak stvara vizuelnu mapu.</p>
             <p><b>Eliminacija straha od greške:</b> Ovde svaka kombinacija nudi značenje. Korisnik ne greši, on istražuje prostor dok ne dođe do cilja.</p>
             <p><b>Audio-vizuelni fidbek:</b> Glas fiksira izgovor, dok zeleni prevod daje trenutnu sigurnost.</p>
-            <p><b>Gledaj u prostor, ne u reči:</b> Kada klikneš na ogledalo, menjaš sebe. Kada klikneš na vrata, menjaš radnju. Do
+            <p><b>Gledaj u prostor, ne u reči:</b> Kada klikneš na ogledalo, menjaš sebe. Kada klikneš na vrata, menjaš radnju.</p>
+            <p><b>Uživaj u "slučajnim" rečenicama:</b> Klikći nasumično i prati kako se prevod menja. Najbolje ćeš naučiti kroz <b>Happy Accidents</b>.</p>
+        </div>
+        <button class="start-btn" style="background:var(--success)" onclick="startApp()">POČNI TRENING</button>
+    </div>
+
+    <div class="app-container">
+        <div id="panel" class="display-wall">
+            <div id="m-text" class="instruction">ZADATAK</div>
+            <div id="en" class="sentence">...</div>
+            <div id="sr" class="live-translation">...</div>
+        </div>
+        
+        <div id="spot-p" class="hotspot" onclick="tap('p')"><div class="hotspot-circle"></div></div>
+        <div id="spot-v" class="hotspot" onclick="tap('v')"><div class="hotspot-circle"></div></div>
+        <div id="spot-n" class="hotspot" onclick="tap('n')"><div class="hotspot-circle"></div></div>
+    </div>
+
+    <script>
+        const db = {
+            p: [{e:"I", s:"Ja"}, {e:"You", s:"Ti"}, {e:"He", s:"On"}, {e:"She", s:"Ona"}, {e:"They", s:"Oni"}],
+            v: [{e:"go", b:"ide"}, {e:"make", b:"pravi"}, {e:"want", b:"želi"}, {e:"need", b:"treba"}, {e:"see", b:"vidi"}],
+            n: [{e:"home", s:"kući"}, {e:"history", s:"istoriju"}, {e:"a choice", s:"izbor"}, {e:"coffee", s:"kafu"}, {e:"the world", s:"svet"}]
+        };
+
+        const goals = [
+            {t:"On želi kafu", r:[2,2,3]}, 
+            {t:"Ja idem kući", r:[0,0,0]}, 
+            {t:"Ti praviš istoriju", r:[1,1,1]},
+            {t:"Oni vide izbor", r:[4,4,2]}, 
+            {t:"Ona treba svet", r:[3,3,4]}
+        ];
+
+        let state = {p:0, v:0, n:0}, cur = 0, lock = false, audio;
+
+        function showStep(n) {
+            document.getElementById('step-1').classList.add('hidden');
+            document.getElementById('step-2').classList.remove('hidden');
+        }
+
+        function startApp() {
+            audio = new (window.AudioContext || window.webkitAudioContext)();
+            document.getElementById('step-2').classList.add('hidden');
+            render(true);
+        }
+
+        function tap(k) {
+            if(lock) return;
+            state[k] = (state[k] + 1) % 5;
+            render(false);
+        }
+
+        function render(mute) {
+            let p = db.p[state.p], v = db.v[state.v], n = db.n[state.n];
+            let vE = v.e, vS = v.b;
+
+            // ENG GRAMATIKA
+            if (p.e === "He" || p.e === "She") { vE = (vE === "go") ? "goes" : vE + "s"; }
+
+            // SRB GRAMATIKA (Glagoli)
+            if (p.e === "I") vS += "m";
+            else if (p.e === "You") vS += "š";
+            else if (p.e === "They") {
+                if (vS === "ide") vS = "idu";
+                else if (vS === "pravi") vS = "prave";
+                else if (vS === "želi") vS = "žele";
+                else if (vS === "treba") vS = "trebaju";
+                else if (vS === "vidi") vS = "vide";
+            }
+
+            // SRB PAMETNA LOGIKA ZA PADEŽE (Nouns)
+            let finalSrNoun = n.s;
+            if (n.e === "home") {
+                finalSrNoun = (v.e === "go") ? "kući" : "kuću";
+            }
+            if (n.e === "history") {
+                finalSrNoun = (v.e === "make") ? "istoriju" : "istorija";
+            }
+
+            document.getElementById('en').innerText = `${p.e} ${vE} ${n.e}`;
+            document.getElementById('sr').innerText = `${p.s} ${vS} ${finalSrNoun}`;
+            document.getElementById('m-text').innerText = `ZADATAK: ${goals[cur].t}`;
+
+            if(!mute) {
+                window.speechSynthesis.cancel();
+                let u = new SpeechSynthesisUtterance(`${p.e} ${vE} ${n.e}`); 
+                u.lang='en-US'; window.speechSynthesis.speak(u);
+            }
+
+            if(state.p==goals[cur].r[0] && state.v==goals[cur].r[1] && state.n==goals[cur].r[2]) {
+                lock = true;
+                document.getElementById('panel').classList.add('success-glow');
+                if(audio) {
+                    let o=audio.createOscillator(), g=audio.createGain();
+                    o.connect(g); g.connect(audio.destination);
+                    o.frequency.setValueAtTime(800, audio.currentTime);
+                    g.gain.setValueAtTime(0.1, audio.currentTime);
+                    o.start(); o.stop(audio.currentTime+0.2);
+                }
+                setTimeout(() => {
+                    lock = false;
+                    cur = (cur + 1) % 5;
+                    state = {p:0, v:0, n:0};
+                    document.getElementById('panel').classList.remove('success-glow');
+                    render(true);
+                }, 1500);
+            }
+        }
+    </script>
+</body>
+</html>
