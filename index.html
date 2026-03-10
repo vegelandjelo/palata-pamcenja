@@ -9,7 +9,7 @@
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; font-family: 'Inter', sans-serif; color: white; }
         .app-container { position: relative; width: 100%; height: 100vh; background-image: url('soba.jpg'); background-size: cover; background-position: center; }
 
-        /* ULTRA KOMPAKTNI HEADER */
+        /* ULTRA KOMPAKTNI PANEL */
         .display-wall { 
             position: absolute; top: 10px; left: 50%; transform: translateX(-50%); 
             width: 85%; max-width: 320px; padding: 10px; 
@@ -21,7 +21,7 @@
         .live-translation { font-size: 13px; color: var(--success); font-style: italic; margin: 0; }
         .score-pill { display: inline-block; margin-top: 5px; padding: 2px 8px; background: rgba(255,255,255,0.1); border-radius: 10px; font-size: 8px; color: rgba(255,255,255,0.5); }
 
-        /* JAKE CRVENE TAČKE */
+        /* CRVENI HOTSPOTOVI */
         .hotspot { position: absolute; width: 60px; height: 60px; z-index: 5; cursor: pointer; }
         .hotspot-circle { 
             width: 100%; height: 100%; background: var(--danger); border-radius: 50%; 
@@ -33,39 +33,40 @@
         #spot-vrata    { top: 38%; left: 52%; }
         #spot-sto      { top: 55%; left: 75%; }
 
+        /* OVERLAYS ZA TUTORIJAL */
         .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.98); z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 25px; text-align: center; }
-        .tutorial-content { max-width: 400px; max-height: 60vh; overflow-y: auto; text-align: left; }
-        .start-btn { margin-top: 20px; padding: 15px 40px; background: var(--accent); border: none; border-radius: 50px; font-weight: 900; text-transform: uppercase; cursor: pointer; font-size: 12px; }
-        .hidden { display: none; }
+        .tutorial-content { max-width: 400px; width: 100%; max-height: 60vh; overflow-y: auto; text-align: left; }
+        .start-btn { margin-top: 20px; padding: 15px 40px; background: var(--accent); border: none; border-radius: 50px; font-weight: 900; text-transform: uppercase; cursor: pointer; font-size: 12px; color: #000; }
+        .hidden { display: none !important; }
         .correct { color: var(--success) !important; text-shadow: 0 0 15px var(--success); }
     </style>
 </head>
 <body>
 
     <div id="step-1" class="overlay">
-        <h2 style="color:var(--accent)">GRAMMAR ROOM</h2>
-        <div style="text-align: left; font-size: 18px; line-height: 2;">
+        <h2 style="color:var(--accent); letter-spacing: 2px;">GRAMMAR ROOM</h2>
+        <div style="text-align: left; font-size: 18px; line-height: 2.5; margin: 20px 0;">
             <p>🪞 <b>Ogledalo</b> = Osoba</p>
             <p>🚪 <b>Vrata</b> = Akcija</p>
             <p>🪴 <b>Sto</b> = Predmet</p>
         </div>
-        <button class="start-btn" onclick="next(1)">DALJE</button>
+        <button class="start-btn" onclick="nextStep(1)">DALJE</button>
     </div>
 
     <div id="step-2" class="overlay hidden">
         <div class="tutorial-content">
-            <h3 style="color:var(--accent)">LOGIKA UČENJA</h3>
-            <p><b>Prostorna mnemonika:</b> Mozak pamti lokacije 10x bolje od pravila. Vrata = Akcija.</p>
-            <p><b>Happy Accident:</b> Nema greške, samo istraživanje. Svaki klik je tačan prevod.</p>
-            <p><b>Audio-vizuelni kod:</b> Slušaj izgovor i prati zeleni tekst za sigurnost.</p>
+            <h3 style="color:var(--accent); border-bottom: 1px solid rgba(0,242,255,0.2); padding-bottom: 5px;">LOGIKA UČENJA</h3>
+            <p style="line-height: 1.6; color: #ccc;"><b>Prostorna mnemonika:</b> Mozak pamti lokacije 10x bolje od pravila. Vrata su uvek akcija.</p>
+            <p style="line-height: 1.6; color: #ccc;"><b>Happy Accident:</b> Nema greške, samo istraživanje. Svaki tvoj klik stvara tačan prevod.</p>
+            <p style="line-height: 1.6; color: #ccc;"><b>Audio-vizuelni kod:</b> Slušaj izgovor i prati zeleni tekst za trenutnu sigurnost.</p>
         </div>
-        <button class="start-btn" style="background:var(--success)" onclick="startApp()">POČNI</button>
+        <button class="start-btn" style="background:var(--success)" onclick="startApp()">POČNI TRENING</button>
     </div>
 
     <div class="app-container">
         <div class="display-wall">
             <div id="mission" class="instruction">ZADATAK</div>
-            <div id="output" class="sentence">---</div>
+            <div id="output" class="sentence">UČITAVANJE...</div>
             <div id="live-translation" class="live-translation">---</div>
             <div id="score" class="score-pill">REŠENO: 0/5</div>
         </div>
@@ -87,14 +88,30 @@
         ];
         let currentIdx = 0, state = {p:0, v:0, n:0}, solved = 0, isCorrect = false;
 
-        function next(s) { document.getElementById('step-'+s).classList.add('hidden'); document.getElementById('step-'+(s+1)).classList.remove('hidden'); }
-        function startApp() { document.getElementById('step-2').classList.add('hidden'); update(true); }
-        function cycle(part) { if(isCorrect) return; state[part] = (state[part] + 1) % data[part].length; update(false); }
-        function speak(t) { window.speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(t); u.lang='en-US'; window.speechSynthesis.speak(u); }
+        function nextStep(s) { 
+            document.getElementById('step-'+s).classList.add('hidden'); 
+            document.getElementById('step-'+(s+1)).classList.remove('hidden'); 
+        }
+        function startApp() { 
+            document.getElementById('step-2').classList.add('hidden'); 
+            update(true); 
+        }
+        function cycle(part) { 
+            if(isCorrect) return; 
+            state[part] = (state[part] + 1) % data[part].length; 
+            update(false); 
+        }
+        function speak(t) { 
+            window.speechSynthesis.cancel(); 
+            const u = new SpeechSynthesisUtterance(t); 
+            u.lang='en-US'; 
+            window.speechSynthesis.speak(u); 
+        }
 
         function update(silent) {
             let p = data.p[state.p], v = data.v[state.v], n = data.n[state.n];
             let vEn = v.en, vSr = v.base;
+            
             if (n.en === "home") { vSr = "ide"; vEn = "go"; }
             if (p.en === "I") vSr += "m"; else if (p.en === "You") vSr += "š"; else if (p.en === "They") vSr = (vSr === "ide") ? "idu" : vSr + "u"; 
             if (p.en === "He" || p.en === "She") vEn = (vEn === "go") ? "goes" : vEn + "s";
@@ -111,9 +128,14 @@
                 document.getElementById('output').classList.add('correct');
                 speak(sent);
                 setTimeout(() => {
-                    isCorrect = false; solved++;
-                    if (solved < 5) currentIdx++;
-                    else { alert("Bravo! Arhitektura tvog znanja je spremna."); solved = 0; currentIdx = 0; }
+                    isCorrect = false; 
+                    solved++;
+                    if (solved < 5) {
+                        currentIdx++;
+                    } else {
+                        alert("Arhitektura tvog znanja je spremna. Samo prirodno.");
+                        solved = 0; currentIdx = 0;
+                    }
                     document.getElementById('score').innerText = `REŠENO: ${solved}/5`;
                     document.getElementById('output').classList.remove('correct');
                     update(true); 
