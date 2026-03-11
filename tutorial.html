@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loci Onboarding</title>
+    <style>
+        :root { --accent: #00f2ff; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; font-family: sans-serif; color: white; }
+        .bg { position: absolute; width: 100%; height: 100%; background: url('soba.jpg') center/cover; filter: brightness(0.2) blur(8px); }
+        .overlay { position: relative; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; text-align: center; }
+        .bubble { background: rgba(0,0,0,0.9); border: 2px solid var(--accent); padding: 30px; border-radius: 30px; max-width: 400px; margin-bottom: 20px; }
+        .btn { background: var(--accent); color: black; border: none; padding: 15px 40px; border-radius: 50px; font-weight: bold; cursor: pointer; }
+        .spot-highlight { position: absolute; width: 80px; height: 80px; border: 3px solid var(--accent); border-radius: 50%; display: none; }
+    </style>
+</head>
+<body>
+    <div class="bg"></div>
+    <div id="marker" class="spot-highlight"></div>
+    <div class="overlay">
+        <div class="bubble">
+            <h1 id="title">🏛️ Loci Metod</h1>
+            <p id="desc">Pretvorili smo ovu sobu u tvoju memorijsku palatu. Svaki predmet je deo gramatike.</p>
+        </div>
+        <button class="btn" onclick="step()">DALJE</button>
+    </div>
+
+    <script>
+        let s = 0;
+        const data = [
+            { t: "🪞 Ogledalo = OSOBA", d: "Ono predstavlja ko vrši radnju. Gledaj u njega za 'Ja, Ti, On...'", top: "55%", left: "8%" },
+            { t: "🚪 Vrata = AKCIJA", d: "Vrata su glagoli. Prolazak kroz njih je vršenje radnje.", top: "38%", left: "48%" },
+            { t: "💻 Sto = PREDMET", d: "Laptop i kafa na stolu su ono što koristiš u rečenici.", top: "58%", left: "80%" },
+            { t: "🚀 To je to!", d: "Sada ulaziš u sobu. Srećno učenje!", top: null }
+        ];
+        function step() {
+            if(s < data.length) {
+                document.getElementById('title').innerText = data[s].t;
+                document.getElementById('desc').innerText = data[s].d;
+                if(data[s].top) {
+                    document.getElementById('marker').style.display = 'block';
+                    document.getElementById('marker').style.top = data[s].top;
+                    document.getElementById('marker').style.left = data[s].left;
+                } else {
+                    document.getElementById('marker').style.display = 'none';
+                    setTimeout(() => { window.location.href = 'index.html'; }, 1500);
+                }
+                s++;
+            }
+        }
+    </script>
+</body>
+</html>
