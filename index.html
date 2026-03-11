@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Grammar Room Engine</title>
+    <title>Grammar Room - Total Engine</title>
     <style>
         :root { --accent: #00f2ff; --success: #00ff88; --danger: #ff4444; }
         * { -webkit-tap-highlight-color: transparent; touch-action: manipulation; box-sizing: border-box; }
@@ -29,10 +29,7 @@
             border: 1px solid rgba(255,255,255,0.1);
             border-radius: 35px;
             text-align: center;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
         }
-        .tutorial-card h2 { color: var(--accent); margin-top: 0; font-size: 26px; letter-spacing: 1px; }
-        .tutorial-card p { font-size: 16px; line-height: 1.6; opacity: 0.8; margin: 25px 0; }
         .tut-btn {
             background: var(--accent);
             color: black;
@@ -40,13 +37,11 @@
             padding: 16px 45px;
             border-radius: 50px;
             font-weight: bold;
-            font-size: 14px;
             cursor: pointer;
-            box-shadow: 0 10px 25px rgba(0,242,255,0.3);
             text-transform: uppercase;
         }
 
-        /* 2. GLAVNI KONTEJNER (SOBA) */
+        /* 2. GLAVNI KONTEJNER */
         .app-container { 
             position: relative; 
             width: 100%; 
@@ -54,20 +49,19 @@
             background-image: url('soba.jpg'); 
             background-size: cover; 
             background-position: center; 
-            transition: filter 0.8s ease; 
         }
         .past-mood { filter: sepia(0.4) brightness(0.8); }
         .future-mood { filter: hue-rotate(160deg) brightness(1.1); }
         
         /* GORNJE SEKCIJE */
         .mode-bar { position: absolute; top: 25px; width: 100%; display: flex; justify-content: center; z-index: 100; }
-        .mode-toggle { padding: 8px 20px; background: var(--danger); border: none; border-radius: 20px; color: white; font-size: 10px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        .mode-toggle.exam-on { background: var(--success); color: #000; box-shadow: 0 0 15px var(--success); }
+        .mode-toggle { padding: 8px 20px; background: var(--danger); border: none; border-radius: 20px; color: white; font-size: 10px; font-weight: bold; cursor: pointer; }
+        .mode-toggle.exam-on { background: var(--success); color: #000; }
 
         .timeline-bar { position: absolute; top: 70px; width: 100%; display: flex; justify-content: center; z-index: 100; }
         .timeline { display: flex; gap: 6px; background: rgba(0,0,0,0.6); padding: 5px; border-radius: 18px; backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); }
-        .time-btn { padding: 8px 15px; border: none; background: transparent; color: white; border-radius: 14px; font-size: 10px; cursor: pointer; text-transform: uppercase; }
-        .time-btn.active { background: var(--accent); color: #000; font-weight: bold; box-shadow: 0 0 10px var(--accent); }
+        .time-btn { padding: 8px 15px; border: none; background: transparent; color: white; border-radius: 14px; font-size: 10px; cursor: pointer; }
+        .time-btn.active { background: var(--accent); color: #000; font-weight: bold; }
 
         /* 3. CRVENI HOTSPOTOVI */
         .hotspot { position: absolute; width: 85px; height: 85px; z-index: 20; display: flex; align-items: center; justify-content: center; cursor: pointer; }
@@ -79,16 +73,15 @@
             animation: pulse-red 2s infinite; 
         }
         @keyframes pulse-red { 
-            0% { transform: scale(1); box-shadow: 0 0 10px rgba(255, 68, 68, 0.5); } 
-            50% { transform: scale(1.15); box-shadow: 0 0 25px rgba(255, 68, 68, 0.8); } 
-            100% { transform: scale(1); box-shadow: 0 0 10px rgba(255, 68, 68, 0.5); } 
+            0% { transform: scale(1); box-shadow: 0 0 10px rgba(255, 68, 68, 0.4); } 
+            50% { transform: scale(1.15); box-shadow: 0 0 25px rgba(255, 68, 68, 0.7); } 
+            100% { transform: scale(1); box-shadow: 0 0 10px rgba(255, 68, 68, 0.4); } 
         }
-        
         #spot-p { top: 25%; left: 15%; } 
         #spot-v { top: 20%; left: 48%; } 
         #spot-n { top: 35%; left: 75%; }
 
-        /* 4. GRAMMAR ROOM PANEL (FLOATING) */
+        /* 4. GRAMMAR PANEL */
         .display-wall { 
             position: absolute; 
             bottom: calc(120px + env(safe-area-inset-bottom)); 
@@ -103,16 +96,13 @@
             text-align: center; 
             border: 1px solid rgba(0,242,255,0.2); 
             z-index: 150;
-            transition: 0.5s;
         }
-        .success-glow { border-color: var(--success); box-shadow: 0 0 40px rgba(0,255,136,0.3); }
-        .instruction { font-size: 9px; color: var(--accent); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; opacity: 0.8; }
-        .sentence { font-size: 24px; font-weight: bold; min-height: 32px; letter-spacing: 0.5px; }
+        .instruction { font-size: 9px; color: var(--accent); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; }
+        .sentence { font-size: 24px; font-weight: bold; min-height: 32px; }
+        .translation-text { color: var(--success); font-size: 16px; margin-top: 10px; font-weight: 500; }
         .blurred { filter: blur(18px); opacity: 0.05; }
-        .translation-text { color: var(--success); font-size: 16px; margin-top: 10px; min-height: 22px; font-weight: 500; }
-        
-        .slogan { position: absolute; bottom: -25px; right: 15px; font-size: 9px; color: white; opacity: 0.4; font-style: italic; }
-        .hidden { display: none !important; opacity: 0; }
+        .slogan { position: absolute; bottom: -25px; right: 15px; font-size: 9px; opacity: 0.4; }
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
@@ -120,20 +110,17 @@
     <div id="tutorial-overlay">
         <div id="step-1" class="tutorial-card">
             <h2>Dobrodošli</h2>
-            <p>Ovo je vaša <b>Gramatička Soba</b>. Svaki predmet u prostoru krije deo rečenice koji treba da savladate.</p>
+            <p>Istražite prostor i savladajte gramatiku kroz interakciju sa predmetima.</p>
             <button class="tut-btn" onclick="nextStep()">DALJE</button>
         </div>
         <div id="step-2" class="tutorial-card hidden">
-            <h2>Koncept</h2>
-            <p>Klikom na <b>crvene tačke</b> menjate osobu, radnju i mesto. Pratite kako se značenje menja u realnom vremenu.</p>
+            <h2>Pravila</h2>
+            <p>Koristite <b>crvene tačke</b> za promenu rečenice. Timeline menja vreme radnje.</p>
             <button class="tut-btn" onclick="finishTutorial()">ZAPOČNI</button>
         </div>
     </div>
 
-    <div class="mode-bar">
-        <button class="mode-toggle" id="exam-toggle" onclick="toggleExam()">ISPIT: ISKLJUČEN</button>
-    </div>
-
+    <div class="mode-bar"><button class="mode-toggle" id="exam-toggle" onclick="toggleExam()">ISPIT: ISKLJUČEN</button></div>
     <div class="timeline-bar">
         <div class="timeline">
             <button class="time-btn" id="btn-past" onclick="setTime('past')">PROŠLOST</button>
@@ -149,37 +136,27 @@
             <div id="en" class="sentence">...</div>
             <div id="sr" class="translation-text">...</div>
         </div>
-        
         <div id="spot-p" class="hotspot" onclick="tap('p')"><div class="hotspot-circle"></div></div>
         <div id="spot-v" class="hotspot" onclick="tap('v')"><div class="hotspot-circle"></div></div>
         <div id="spot-n" class="hotspot" onclick="tap('n')"><div class="hotspot-circle"></div></div>
     </div>
 
     <script>
-        // MANUELNA TABELA - OVDE MENJAŠ ŠTA GOD ŽELIŠ
-        const prevodi = {
-            osobe: ["Ja", "Ti", "On", "Ona", "Oni"],
-            past: {
-                v0: ["sam išao", "si išao", "je išao", "je išla", "su išli"], 
-                v1: ["sam pravio", "si pravio", "je pravio", "je pravila", "su pravili"],
-                v2: ["sam želeo", "si želeo", "je želeo", "je želela", "su želeli"]
-            },
-            present: {
-                v0: ["idem", "ideš", "ide", "ide", "idu"],
-                v1: ["pravim", "praviš", "pravi", "pravi", "prave"],
-                v2: ["želim", "želiš", "želi", "želi", "žele"]
-            },
-            future: {
-                v0: ["ću ići", "ćeš ići", "će ići", "će ići", "će ići"],
-                v1: ["ću praviti", "ćeš praviti", "će praviti", "će praviti", "će praviti"],
-                v2: ["ću želeti", "ćeš želeti", "će želeti", "će želeti", "će želeti"]
-            },
-            objekti: ["kući", "istoriju", "kafu"]
+        // TOTAL FLAT MAPA - Ovde upisuješ PUNU srpsku rečenicu za svaku kombinaciju
+        // Ključ: p(osoba)_v(glagol)_n(objekat)_t(vreme)
+        const totalBaza = {
+            // PRIMER ZA ONA (p3) + ŽELETI (v2) + KUĆU (n0) + BUDUĆNOST (future)
+            "p3_v2_n0_future": "Ona će želeti kuću",
+            "p3_v0_n0_future": "Ona će ići kući",
+            
+            // Ovde nastavljaš da puniš ostalo...
+            "p0_v0_n0_present": "Ja idem kući",
+            "p0_v1_n2_present": "Ja pravim kafu",
+            // ITD...
         };
 
         let state = { p:0, v:0, n:0, time:'present' }, isExam = false;
 
-        // TUTORIAL LOGIKA
         function nextStep() {
             document.getElementById('step-1').classList.add('hidden');
             setTimeout(() => {
@@ -190,12 +167,9 @@
 
         function finishTutorial() {
             document.getElementById('tutorial-overlay').style.opacity = '0';
-            setTimeout(() => {
-                document.getElementById('tutorial-overlay').style.display = 'none';
-            }, 600);
+            setTimeout(() => { document.getElementById('tutorial-overlay').style.display = 'none'; }, 600);
         }
 
-        // ENGINE LOGIKA
         function toggleExam() {
             isExam = !isExam;
             document.getElementById('exam-toggle').innerText = isExam ? "ISPIT: UKLJUČEN" : "ISPIT: ISKLJUČEN";
@@ -214,23 +188,21 @@
         function tap(k) { state[k] = (state[k] + 1) % (k === 'p' ? 5 : 3); render(); }
 
         function render() {
-            let pIdx = state.p, vIdx = state.v, nIdx = state.n, t = state.time;
+            let key = `p${state.p}_v${state.v}_n${state.n}_${state.time}`;
+            let srS = totalBaza[key] || "Rečenica nije upisana";
             
-            // Engleski
-            let enS = generateEnglish(pIdx, vIdx, nIdx, t);
-            
-            // Srpski - direktno iz manuelne tabele
-            let srS = `${prevodi.osobe[pIdx]} ${prevodi[t]["v" + vIdx][pIdx]} ${prevodi.objekti[nIdx]}`;
+            // Engleski (ostaje logički jer je jednostavan)
+            let enS = generateEnglish(state.p, state.v, state.n, state.time);
 
             document.getElementById('en').innerText = enS;
             document.getElementById('sr').innerText = isExam ? "???" : srS;
-            document.getElementById('m-text').innerText = isExam ? "PRONAĐI KOMBINACIJU" : "ISTRAŽIVANJE";
             
-            if (isExam) document.getElementById('en').classList.add('blurred');
-            else {
+            if (!isExam) {
                 document.getElementById('en').classList.remove('blurred');
                 window.speechSynthesis.cancel();
                 let u = new SpeechSynthesisUtterance(enS); u.lang='en-US'; window.speechSynthesis.speak(u);
+            } else {
+                document.getElementById('en').classList.add('blurred');
             }
         }
 
