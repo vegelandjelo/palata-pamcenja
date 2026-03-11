@@ -3,13 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Grammar Room - Pro Edition</title>
+    <title>Grammar Room - Bottom Dock Edition</title>
     <style>
         :root { --accent: #00f2ff; --success: #00ff88; --danger: #ff4444; }
         * { -webkit-tap-highlight-color: transparent; touch-action: manipulation; box-sizing: border-box; }
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; font-family: 'Segoe UI', sans-serif; color: white; }
         
-        /* Pozadina sa tranzicijom filtera */
         .app-container { 
             position: relative; 
             width: 100%; 
@@ -17,67 +16,68 @@
             background-image: url('soba.jpg'); 
             background-size: cover; 
             background-position: center; 
-            transition: filter 0.8s cubic-bezier(0.4, 0, 0.2, 1); 
+            transition: filter 0.8s ease; 
         }
-        .past-mood { filter: sepia(0.6) brightness(0.9) contrast(1.1); }
-        .future-mood { filter: hue-rotate(160deg) brightness(1.1) saturate(1.2); }
+        .past-mood { filter: sepia(0.5) brightness(0.8); }
+        .future-mood { filter: hue-rotate(160deg) brightness(1.1); }
         
-        /* Interfejs na vrhu */
-        .top-bar { position: absolute; top: 15px; width: 100%; display: flex; flex-direction: column; align-items: center; gap: 12px; z-index: 100; }
-        .score-board { color: var(--success); font-weight: bold; font-size: 14px; letter-spacing: 2px; text-shadow: 0 0 10px var(--success); }
-        .timeline { display: flex; gap: 8px; background: rgba(0,0,0,0.6); padding: 5px; border-radius: 20px; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
-        .time-btn { padding: 8px 16px; border: none; background: transparent; color: white; border-radius: 15px; font-size: 11px; cursor: pointer; transition: 0.3s; }
+        /* Top Bar */
+        .top-bar { position: absolute; top: 15px; width: 100%; display: flex; flex-direction: column; align-items: center; gap: 8px; z-index: 100; }
+        .score-board { color: var(--success); font-weight: bold; font-size: 12px; letter-spacing: 2px; text-shadow: 0 0 10px var(--success); background: rgba(0,0,0,0.5); padding: 4px 12px; border-radius: 10px; }
+        .timeline { display: flex; gap: 5px; background: rgba(0,0,0,0.6); padding: 4px; border-radius: 15px; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+        .time-btn { padding: 6px 14px; border: none; background: transparent; color: white; border-radius: 12px; font-size: 10px; cursor: pointer; transition: 0.3s; }
         .time-btn.active { background: var(--accent); color: #000; font-weight: bold; }
 
-        .mode-toggle { padding: 10px 25px; background: var(--danger); border: none; border-radius: 25px; color: white; font-weight: bold; font-size: 11px; cursor: pointer; transition: 0.4s; box-shadow: 0 4px 15px rgba(255,0,0,0.2); }
-        .mode-toggle.exam-on { background: var(--success); color: #000; box-shadow: 0 4px 15px rgba(0,255,136,0.3); }
-
-        /* Glavni Panel sa Smooth Unblur */
+        /* NOVI PANEL NA dnu (DOCK STIL) */
         .display-wall { 
             position: absolute; 
-            top: 150px; 
+            bottom: 25px; /* Pomereno skroz dole */
             left: 50%; 
             transform: translateX(-50%); 
-            width: 90%; 
-            max-width: 340px; 
-            padding: 20px; 
-            background: rgba(0,0,0,0.8); 
-            backdrop-filter: blur(20px); 
-            border-radius: 24px; 
+            width: 92%; 
+            max-width: 400px; 
+            padding: 18px; 
+            background: rgba(0,0,0,0.75); 
+            backdrop-filter: blur(25px); 
+            border-radius: 30px; 
             text-align: center; 
-            border: 1px solid rgba(0,242,255,0.2); 
-            transition: all 0.5s ease; 
+            border: 1px solid rgba(255,255,255,0.15); 
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            z-index: 150;
         }
-        .success-glow { border-color: var(--success) !important; box-shadow: 0 0 40px var(--success); transform: translateX(-50%) scale(1.05); }
+        .success-glow { border-color: var(--success) !important; box-shadow: 0 -10px 40px rgba(0,255,136,0.3); transform: translateX(-50%) translateY(-5px); }
         
-        .instruction { font-size: 10px; color: var(--accent); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; opacity: 0.7; }
-        .sentence { font-size: 24px; font-weight: bold; transition: filter 0.6s ease, opacity 0.6s ease; }
-        .blurred { filter: blur(15px); opacity: 0.1; }
-        .translation-text { color: var(--success); font-size: 15px; margin-top: 10px; font-style: italic; min-height: 20px; }
+        .mode-toggle { margin-bottom: 5px; padding: 6px 18px; background: var(--danger); border: none; border-radius: 20px; color: white; font-weight: bold; font-size: 9px; cursor: pointer; }
+        .mode-toggle.exam-on { background: var(--success); color: #000; }
+
+        .instruction { font-size: 9px; color: var(--accent); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px; opacity: 0.8; }
+        .sentence { font-size: 22px; font-weight: bold; transition: filter 0.6s ease; }
+        .blurred { filter: blur(14px); opacity: 0.1; }
+        .translation-text { color: var(--success); font-size: 14px; margin-top: 6px; font-style: italic; min-height: 18px; }
 
         /* Hotspotovi */
-        .hotspot { position: absolute; width: 90px; height: 90px; z-index: 20; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-        .hotspot-circle { width: 35px; height: 35px; background: rgba(255,255,255,0.1); border-radius: 50%; border: 2px solid white; box-shadow: 0 0 15px rgba(255,255,255,0.3); animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { transform: scale(1); opacity: 0.5; } 50% { transform: scale(1.1); opacity: 0.8; } 100% { transform: scale(1); opacity: 0.5; } }
+        .hotspot { position: absolute; width: 80px; height: 80px; z-index: 20; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        .hotspot-circle { width: 30px; height: 30px; background: rgba(255,255,255,0.1); border-radius: 50%; border: 2px solid white; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); opacity: 0.4; } 50% { transform: scale(1.15); opacity: 0.7; } 100% { transform: scale(1); opacity: 0.4; } }
         
-        #spot-p { top: 50%; left: 10%; } 
-        #spot-v { top: 40%; left: 45%; } 
-        #spot-n { top: 60%; left: 75%; }
+        #spot-p { top: 45%; left: 15%; } 
+        #spot-v { top: 35%; left: 48%; } 
+        #spot-n { top: 55%; left: 75%; }
 
         .hidden { display: none !important; }
-        .slogan { position: absolute; bottom: 10px; right: 10px; font-size: 10px; opacity: 0.5; letter-spacing: 1px; }
+        .slogan { position: absolute; bottom: 5px; right: 15px; font-size: 9px; opacity: 0.4; font-style: italic; }
     </style>
 </head>
 <body>
 
     <div class="top-bar">
-        <div id="score" class="score-board hidden">BODOVI: 0</div>
+        <button class="mode-toggle" id="exam-toggle" onclick="toggleExam()">ISPIT: ISKLJUČEN</button>
         <div class="timeline">
             <button class="time-btn" id="btn-past" onclick="setTime('past')">PROŠLOST</button>
             <button class="time-btn active" id="btn-present" onclick="setTime('present')">SADAŠNJOST</button>
             <button class="time-btn" id="btn-future" onclick="setTime('future')">BUDUĆNOST</button>
         </div>
-        <button class="mode-toggle" id="exam-toggle" onclick="toggleExam()">ISPIT: ISKLJUČEN</button>
+        <div id="score" class="score-board hidden">BODOVI: 0</div>
     </div>
 
     <div class="app-container" id="room">
@@ -149,7 +149,7 @@
             const enDisplay = document.getElementById('en');
             const srDisplay = document.getElementById('sr');
             enDisplay.innerText = enS;
-            document.getElementById('m-text').innerText = isExam ? `ZADATAK: ${goals[curGoal].t}` : "ISTRAŽIVANJE";
+            document.getElementById('m-text').innerText = isExam ? `PRONAĐI: ${goals[curGoal].t}` : "ISTRAŽIVANJE";
 
             if (isExam) {
                 enDisplay.classList.add('blurred');
@@ -157,7 +157,7 @@
                 checkSuccess();
             } else {
                 enDisplay.classList.remove('blurred');
-                srDisplay.innerText = "Slušaj i uči";
+                srDisplay.innerText = "Slušaj izgovor";
                 window.speechSynthesis.cancel();
                 let u = new SpeechSynthesisUtterance(enS); u.lang='en-US'; window.speechSynthesis.speak(u);
             }
