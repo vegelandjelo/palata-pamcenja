@@ -2,200 +2,155 @@
 <html lang="sr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Grammar Room - Exam Ready</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Grammar Room v1.2</title>
     <style>
         :root { --accent: #00f2ff; --success: #00ff88; --danger: #ff4444; }
-        * { -webkit-tap-highlight-color: transparent; touch-action: manipulation; box-sizing: border-box; }
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; font-family: 'Segoe UI', sans-serif; color: white; }
+        * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; font-family: sans-serif; color: white; }
         
-        .app-container { position: relative; width: 100%; height: 100vh; background: url('soba.jpg') center/cover; transition: 0.5s; }
-        .tutorial-active .app-container { filter: brightness(0.1) blur(15px); }
-        .past-mood { filter: sepia(0.5) brightness(0.7); }
-        .future-mood { filter: hue-rotate(160deg) brightness(1.1); }
+        .app-container { position: relative; width: 100%; height: 100vh; background: url('soba.jpg') center/cover; transition: 0.4s; }
+        .past-mood { filter: sepia(0.6) brightness(0.7); }
+        .future-mood { filter: hue-rotate(150deg) brightness(1.1); }
 
-        /* TUTORIJAL */
-        #master-tutorial { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 2000; display: flex; flex-direction: column; justify-content: center; align-items: center; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); }
-        .bubble { background: rgba(0,0,0,0.95); border: 2px solid var(--accent); padding: 30px; border-radius: 35px; width: 92%; max-width: 550px; max-height: 70vh; overflow-y: auto; margin-bottom: 20px; }
-        .tut-btn { background: var(--accent); color: #000; border: none; padding: 18px 50px; border-radius: 50px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+        /* UI GORE */
+        .top-ui { position: absolute; top: 20px; width: 100%; display: flex; flex-direction: column; align-items: center; z-index: 100; gap: 10px; }
+        .timeline { display: flex; background: rgba(0,0,0,0.8); padding: 5px; border-radius: 15px; border: 1px solid var(--accent); }
+        .time-btn { padding: 8px 12px; border: none; background: transparent; color: white; font-size: 10px; font-weight: bold; }
+        .time-btn.active { background: var(--accent); color: #000; border-radius: 10px; }
+        
+        .exam-btn { background: var(--danger); color: white; border: none; padding: 10px 20px; border-radius: 20px; font-weight: bold; font-size: 11px; }
+        .exam-on { background: var(--success); color: black; }
 
         /* HOTSPOTOVI */
-        .hotspot { position: absolute; width: 85px; height: 85px; z-index: 20; display: flex; align-items: center; justify-content: center; }
-        .hotspot-circle { width: 34px; height: 34px; border: 2px solid var(--danger); border-radius: 50%; background: rgba(255,68,68,0.2); animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
-        #spot-p { top: 55%; left: 8%; } #spot-v { top: 38%; left: 48%; } #spot-n { top: 58%; left: 80%; }
+        .spot { position: absolute; width: 70px; height: 70px; display: flex; align-items: center; justify-content: center; z-index: 50; }
+        .circle { width: 30px; height: 30px; border: 2px solid var(--danger); border-radius: 50%; background: rgba(255,68,68,0.2); }
+        #p-spot { top: 55%; left: 10%; } #v-spot { top: 38%; left: 48%; } #n-spot { top: 58%; left: 80%; }
 
-        /* UI STRUKTURA */
-        .ui-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100; }
-        .ui-layer * { pointer-events: auto; }
-        .top-nav { display: flex; flex-direction: column; align-items: center; padding-top: 30px; gap: 15px; }
-        
-        .timeline { display: flex; gap: 5px; background: rgba(0,0,0,0.7); padding: 5px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); }
-        .time-btn { padding: 10px 15px; border: none; background: transparent; color: white; border-radius: 15px; font-size: 10px; font-weight: bold; }
-        .time-btn.active { background: var(--accent); color: #000; }
+        /* PANEL DOLE */
+        .display { position: absolute; bottom: 100px; left: 50%; transform: translateX(-50%); width: 90%; background: rgba(0,0,0,0.9); padding: 20px; border-radius: 25px; border: 1px solid var(--accent); text-align: center; }
+        #task { font-size: 10px; color: var(--accent); letter-spacing: 2px; margin-bottom: 5px; }
+        #en { font-size: 22px; font-weight: bold; margin: 10px 0; }
+        #sr { color: var(--success); font-size: 16px; }
 
-        .exam-status { background: var(--danger); color: white; padding: 8px 25px; border-radius: 20px; font-size: 11px; font-weight: bold; border: none; }
-        .exam-on { background: var(--success); color: #000; }
-
-        .display-wall { position: absolute; bottom: 120px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 440px; padding: 25px; background: rgba(0,0,0,0.85); border-radius: 35px; text-align: center; border: 1.5px solid var(--accent); box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
-        
-        .icon-summary { display: flex; justify-content: space-around; margin-top: 20px; border-top: 1px solid rgba(0,242,255,0.2); padding-top: 15px; }
-        .hidden { display: none !important; }
-        b { color: var(--accent); }
+        /* TUTORIJAL SKROLOVANJE */
+        #tut { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+        .tut-box { background: #111; border: 2px solid var(--accent); padding: 25px; border-radius: 25px; max-height: 60vh; overflow-y: auto; width: 100%; max-width: 400px; line-height: 1.6; }
     </style>
 </head>
-<body class="tutorial-active">
+<body>
 
-    <div id="master-tutorial">
-        <div class="bubble" id="tut-bubble">
-            <h1 id="tut-title" style="color: var(--accent);">Dobrodošli</h1>
-            <div id="tut-content">
-                <p style="line-height: 1.7; font-size: 16px;">Ispred vas se nalazi jedna vrlo neuobičajena i zanimljiva aplikacija.</p>
-            </div>
-            <div id="tut-icons" class="hidden">
-                <div class="icon-summary">
-                    <div style="text-align:center"><span style="font-size:40px">🪞</span><br><small>OSOBA</small></div>
-                    <div style="text-align:center"><span style="font-size:40px">🚪</span><br><small>AKCIJA</small></div>
-                    <div style="text-align:center"><span style="font-size:40px">💻</span><br><small>PREDMET</small></div>
-                </div>
-            </div>
+    <div id="tut">
+        <div class="tut-box">
+            <h2 style="color:var(--accent)">Grammar Room</h2>
+            <p>Ispred vas se nalazi jedna vrlo neuobičajena i zanimljiva aplikacija.<br><br>
+            <b>Loci Metod:</b> Koristimo prostor sobe da zapamtite gramatiku. Vaš mozak pamti lokacije (ogledalo, vrata, sto) umesto suvoparnih pravila.<br><br>
+            <b>Pareto Zakon:</b> Učite samo onih 20% jezika koji se koriste u 80% situacija. Bez gubljenja vremena.<br><br>
+            <b>Happy Accident:</b> Slobodno klikćite. Istražujte. Dozvolite mozgu da sam poveže sliku, zvuk i značenje.</p>
         </div>
-        <button class="tut-btn" onclick="runTutorial()">DALJE</button>
+        <button onclick="closeTut()" style="margin-top:20px; padding:15px 40px; border-radius:30px; border:none; background:var(--accent); font-weight:bold;">KRENI</button>
     </div>
 
     <div class="app-container" id="room">
-        <div class="ui-layer">
-            <div class="top-nav">
-                <button id="exam-btn" class="exam-status" onclick="toggleExam()">ISPIT: ISKLJUČEN</button>
-                <div class="timeline">
-                    <button class="time-btn" id="btn-past" onclick="setTime('past')">PROŠLOST</button>
-                    <button class="time-btn active" id="btn-present" onclick="setTime('present')">SADAŠNJOST</button>
-                    <button class="time-btn" id="btn-future" onclick="setTime('future')">BUDUĆNOST</button>
-                </div>
+        <div class="top-ui">
+            <button class="exam-btn" id="ex-btn" onclick="toggleExam()">ISPIT: ISKLJUČEN</button>
+            <div class="timeline">
+                <button class="time-btn" id="t-past" onclick="setTime('past')">PROŠLOST</button>
+                <button class="time-btn active" id="t-present" onclick="setTime('present')">SADAŠNJOST</button>
+                <button class="time-btn" id="t-future" onclick="setTime('future')">BUDUĆNOST</button>
             </div>
         </div>
 
-        <div id="spot-p" class="hotspot" onclick="tap('p')"><div class="hotspot-circle"></div></div>
-        <div id="spot-v" class="hotspot" onclick="tap('v')"><div class="hotspot-circle"></div></div>
-        <div id="spot-n" class="hotspot" onclick="tap('n')"><div class="hotspot-circle"></div></div>
+        <div id="p-spot" class="spot" onclick="tap('p')"><div class="circle"></div></div>
+        <div id="v-spot" class="spot" onclick="tap('v')"><div class="circle"></div></div>
+        <div id="n-spot" class="spot" onclick="tap('n')"><div class="circle"></div></div>
 
-        <div class="display-wall">
-            <div id="task-label" style="font-size: 10px; color: var(--accent); letter-spacing: 2px; margin-bottom:10px;">ISTRAŽIVANJE</div>
-            <div id="en-text" style="font-size: 26px; font-weight: bold; min-height: 35px;">...</div>
-            <div id="sr-text" style="color: var(--success); font-size: 17px; margin-top: 12px;">...</div>
+        <div class="display">
+            <div id="task">ISTRAŽIVANJE</div>
+            <div id="en">...</div>
+            <div id="sr">...</div>
         </div>
     </div>
 
     <script>
-        const totalBaza = {
-            "p0_v0_n0_present": "Ja idem kući", "p0_v0_n1_present": "Ja idem u istoriju", "p0_v0_n2_present": "Ja idem na kafu",
-            "p1_v0_n0_present": "Ti ideš kući", "p2_v0_n0_present": "On ide kući", "p3_v0_n0_present": "Ona ide kući", "p4_v0_n0_present": "Oni idu kući",
-            "p0_v1_n2_present": "Ja pravim kafu", "p3_v1_n0_present": "Ona pravi kuću", "p0_v2_n0_present": "Ja želim kuću", "p3_v2_n0_present": "Ona želi kuću",
-            "p0_v0_n0_past": "Ja sam išao kući", "p1_v0_n0_past": "Ti si išao kući", "p2_v0_n0_past": "On je išao kući", "p3_v0_n0_past": "Ona je išla kući", "p4_v0_n0_past": "Oni su išli kući",
-            "p0_v1_n2_past": "Ja sam pravio kafu", "p3_v1_n0_past": "Ona je pravila kuću", "p0_v2_n0_past": "Ja sam želeo kuću",
-            "p0_v0_n0_future": "Ja ću ići kući", "p1_v0_n0_future": "Ti ćeš ići kući", "p2_v0_n0_future": "On će ići kući", "p3_v0_n0_future": "Ona će ići kući", "p0_v1_n2_future": "Ja ću praviti kafu"
+        const baza = {
+            "p0_v0_n0_present": "Ja idem kući", "p2_v0_n0_present": "On ide kući", "p0_v1_n2_present": "Ja pravim kafu",
+            "p0_v0_n0_past": "Ja sam išao kući", "p3_v0_n0_past": "Ona je išla kući", "p0_v1_n2_past": "Ja sam pravio kafu",
+            "p0_v0_n0_future": "Ja ću ići kući", "p2_v0_n0_future": "On će ići kući", "p0_v1_n2_future": "Ja ću praviti kafu"
         };
 
         let state = { p:0, v:0, n:0, time:'present' };
-        let exam = { active: false, targetKey: '', score: 0, total: 5 };
-        let tutStep = 0;
+        let examMode = false;
+        let score = 0;
+        let currentTarget = "p0_v0_n0_present";
 
-        function runTutorial() {
-            const content = document.getElementById('tut-content');
-            const title = document.getElementById('tut-title');
-            if (tutStep === 0) {
-                title.innerText = "Filozofija";
-                content.innerHTML = `<p style="text-align:left; font-size:15px;"><b>Loci Metod:</b> Prostorno pamćenje. Mozak je GPS, ne kanta.<br><br><b>Pareto Zakon:</b> 20% reči za 80% uspeha.<br><br><b>Happy Accident:</b> Učenje kroz slobodno istraživanje.</p>`;
-                tutStep++;
-            } else if (tutStep === 1) {
-                title.innerText = "Mapa";
-                content.innerHTML = `<p>Zapamtite tri sidra:</p>`;
-                document.getElementById('tut-icons').classList.remove('hidden');
-                tutStep++;
-            } else {
-                document.body.classList.remove('tutorial-active');
-                document.getElementById('master-tutorial').classList.add('hidden');
-                render();
-            }
-        }
+        function closeTut() { document.getElementById('tut').style.display = 'none'; render(); }
 
         function setTime(t) {
             state.time = t;
             document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById('btn-' + t).classList.add('active');
+            document.getElementById('t-' + t).classList.add('active');
             document.getElementById('room').className = 'app-container ' + (t === 'past' ? 'past-mood' : t === 'future' ? 'future-mood' : '');
             render();
         }
 
-        function tap(k) { 
-            state[k] = (state[k] + 1) % (k === 'p' ? 5 : 3); 
-            render(); 
+        function tap(k) {
+            if(k === 'p') state.p = (state.p + 1) % 5;
+            if(k === 'v') state.v = (state.v + 1) % 3;
+            if(k === 'n') state.n = (state.n + 1) % 3;
+            render();
         }
 
         function toggleExam() {
-            exam.active = !exam.active;
-            if(exam.active) {
-                exam.score = 0;
-                nextTask();
-            }
-            const btn = document.getElementById('exam-btn');
-            btn.innerText = exam.active ? "ISPIT: UKLJUČEN" : "ISPIT: ISKLJUČEN";
-            btn.classList.toggle('exam-on', exam.active);
+            examMode = !examMode;
+            score = 0;
+            const b = document.getElementById('ex-btn');
+            b.innerText = examMode ? "ISPIT: UKLJUČEN" : "ISPIT: ISKLJUČEN";
+            b.classList.toggle('exam-on');
+            if(examMode) nextTask();
             render();
         }
 
         function nextTask() {
-            const keys = Object.keys(totalBaza);
-            exam.targetKey = keys[Math.floor(Math.random() * keys.length)];
+            const keys = Object.keys(baza);
+            currentTarget = keys[Math.floor(Math.random() * keys.length)];
         }
 
         function render() {
-            let currentKey = `p${state.p}_v${state.v}_n${state.n}_${state.time}`;
-            let sr = totalBaza[currentKey] || "Rečenica u pripremi...";
-            let en = generateEnglish(state.p, state.v, state.n, state.time);
-
-            if (exam.active) {
-                document.getElementById('task-label').innerText = `ZADATAK ${exam.score + 1}/${exam.total}`;
-                document.getElementById('sr-text').innerText = "???";
-                document.getElementById('en-text').innerText = totalBaza[exam.targetKey];
-                document.getElementById('en-text').style.filter = "blur(18px)";
-                document.getElementById('sr-text').innerText = totalBaza[exam.targetKey]; // Prikazujemo srpski kao zadatak
-
-                if (currentKey === exam.targetKey) {
-                    exam.score++;
-                    if(exam.score >= exam.total) {
-                        alert("ČESTITAMO! Savladali ste prvu sobu!");
-                        toggleExam();
-                    } else {
-                        nextTask();
-                        render();
-                    }
+            let key = `p${state.p}_v${state.v}_n${state.n}_${state.time}`;
+            let en = generateEN(state.p, state.v, state.n, state.time);
+            
+            if(examMode) {
+                document.getElementById('task').innerText = `ZADATAK ${score + 1}/5`;
+                document.getElementById('sr').innerText = baza[currentTarget];
+                document.getElementById('en').innerText = "???";
+                
+                if(key === currentTarget) {
+                    score++;
+                    if(score >= 5) { alert("BRAVO! Završio si nivo!"); toggleExam(); }
+                    else { nextTask(); render(); }
                 }
             } else {
-                document.getElementById('task-label').innerText = "ISTRAŽIVANJE";
-                document.getElementById('en-text').innerText = en;
-                document.getElementById('en-text').style.filter = "none";
-                document.getElementById('sr-text').innerText = sr;
-                if (!document.body.classList.contains('tutorial-active')) {
-                    window.speechSynthesis.cancel();
-                    let u = new SpeechSynthesisUtterance(en); u.lang='en-US'; window.speechSynthesis.speak(u);
-                }
+                document.getElementById('task').innerText = "ISTRAŽIVANJE";
+                document.getElementById('en').innerText = en;
+                document.getElementById('sr').innerText = baza[key] || "Istraži dalje...";
+                window.speechSynthesis.cancel();
+                let u = new SpeechSynthesisUtterance(en); u.lang='en-US'; window.speechSynthesis.speak(u);
             }
         }
 
-        function generateEnglish(p, v, n, t) {
-            const en_p = ["I", "You", "He", "She", "They"];
-            const en_v = [{p:"go", past:"went"}, {p:"make", past:"made"}, {p:"want", past:"wanted"}];
-            const en_n = ["home", "history", "coffee"];
-            let verb = en_v[v].p;
+        function generateEN(p, v, n, t) {
+            const ps = ["I", "You", "He", "She", "They"];
+            const vs = [{p:"go", past:"went"}, {p:"make", past:"made"}, {p:"want", past:"wanted"}];
+            const ns = ["home", "history", "coffee"];
             if(t === 'present') {
+                let verb = vs[v].p;
                 if(p === 2 || p === 3) verb = (verb === "go") ? "goes" : verb + "s";
-                return `${en_p[p]} ${verb} ${en_n[n]}`;
-            } 
-            if(t === 'past') return `${en_p[p]} ${en_v[v].past} ${en_n[n]}`;
-            return `${en_p[p]} will ${en_v[v].p} ${en_n[n]}`;
+                return ps[p] + " " + verb + " " + ns[n];
+            }
+            if(t === 'past') return ps[p] + " " + vs[v].past + " " + ns[n];
+            return ps[p] + " will " + vs[v].p + " " + ns[n];
         }
-        render();
     </script>
 </body>
 </html>
