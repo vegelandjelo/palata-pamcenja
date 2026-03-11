@@ -2,40 +2,102 @@
 <html lang="sr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Grammar Room v1.2</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Grammar Room v1.3 - Mobile Fix</title>
     <style>
         :root { --accent: #00f2ff; --success: #00ff88; --danger: #ff4444; }
-        * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; font-family: sans-serif; color: white; }
+        * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; margin: 0; padding: 0; }
         
-        .app-container { position: relative; width: 100%; height: 100vh; background: url('soba.jpg') center/cover; transition: 0.4s; }
+        body, html { width: 100%; height: 100%; overflow: hidden; background: #000; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: white; }
+        
+        .app-container { position: relative; width: 100%; height: 100%; background: url('soba.jpg') center/cover no-repeat; transition: 0.4s; }
         .past-mood { filter: sepia(0.6) brightness(0.7); }
         .future-mood { filter: hue-rotate(150deg) brightness(1.1); }
 
-        /* UI GORE */
-        .top-ui { position: absolute; top: 20px; width: 100%; display: flex; flex-direction: column; align-items: center; z-index: 100; gap: 10px; }
-        .timeline { display: flex; background: rgba(0,0,0,0.8); padding: 5px; border-radius: 15px; border: 1px solid var(--accent); }
-        .time-btn { padding: 8px 12px; border: none; background: transparent; color: white; font-size: 10px; font-weight: bold; }
-        .time-btn.active { background: var(--accent); color: #000; border-radius: 10px; }
+        /* UI GORE - FIX ZA MOBILNI */
+        .top-ui { 
+            position: absolute; 
+            top: env(safe-area-inset-top, 20px); /* Pametno rastojanje od kamere/notcha */
+            width: 100%; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            z-index: 100; 
+            gap: 12px;
+            padding: 0 15px;
+        }
         
-        .exam-btn { background: var(--danger); color: white; border: none; padding: 10px 20px; border-radius: 20px; font-weight: bold; font-size: 11px; }
-        .exam-on { background: var(--success); color: black; }
+        .timeline { 
+            display: flex; 
+            background: rgba(0,0,0,0.85); 
+            padding: 4px; 
+            border-radius: 15px; 
+            border: 1px solid var(--accent);
+            width: 100%;
+            max-width: 350px; /* Da ne bude preširoko na PC-u */
+        }
+        
+        .time-btn { 
+            flex: 1; 
+            padding: 12px 5px; 
+            border: none; 
+            background: transparent; 
+            color: white; 
+            font-size: 10px; 
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: 0.2s;
+        }
+        
+        .time-btn.active { 
+            background: var(--accent); 
+            color: #000; 
+            border-radius: 11px; 
+        }
+        
+        .exam-btn { 
+            background: var(--danger); 
+            color: white; 
+            border: none; 
+            padding: 10px 25px; 
+            border-radius: 20px; 
+            font-weight: bold; 
+            font-size: 11px;
+            box-shadow: 0 4px 15px rgba(255, 68, 68, 0.3);
+        }
+        .exam-on { background: var(--success); color: black; box-shadow: 0 4px 15px rgba(0, 255, 136, 0.3); }
 
         /* HOTSPOTOVI */
-        .spot { position: absolute; width: 70px; height: 70px; display: flex; align-items: center; justify-content: center; z-index: 50; }
-        .circle { width: 30px; height: 30px; border: 2px solid var(--danger); border-radius: 50%; background: rgba(255,68,68,0.2); }
+        .spot { position: absolute; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; z-index: 50; }
+        .circle { width: 32px; height: 32px; border: 2.5px solid var(--danger); border-radius: 50%; background: rgba(255,68,68,0.2); box-shadow: 0 0 15px var(--danger); }
         #p-spot { top: 55%; left: 10%; } #v-spot { top: 38%; left: 48%; } #n-spot { top: 58%; left: 80%; }
 
         /* PANEL DOLE */
-        .display { position: absolute; bottom: 100px; left: 50%; transform: translateX(-50%); width: 90%; background: rgba(0,0,0,0.9); padding: 20px; border-radius: 25px; border: 1px solid var(--accent); text-align: center; }
-        #task { font-size: 10px; color: var(--accent); letter-spacing: 2px; margin-bottom: 5px; }
-        #en { font-size: 22px; font-weight: bold; margin: 10px 0; }
-        #sr { color: var(--success); font-size: 16px; }
+        .display { 
+            position: absolute; 
+            bottom: calc(env(safe-area-inset-bottom, 20px) + 80px); 
+            left: 50%; 
+            transform: translateX(-50%); 
+            width: 92%; 
+            max-width: 450px;
+            background: rgba(0,0,0,0.92); 
+            padding: 25px 15px; 
+            border-radius: 30px; 
+            border: 1px solid var(--accent); 
+            text-align: center;
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.5);
+        }
+        #task { font-size: 10px; color: var(--accent); letter-spacing: 2px; margin-bottom: 8px; font-weight: bold; text-transform: uppercase; }
+        #en { font-size: 24px; font-weight: 900; margin: 5px 0; letter-spacing: -0.5px; }
+        #sr { color: var(--success); font-size: 17px; font-weight: 500; }
 
-        /* TUTORIJAL SKROLOVANJE */
-        #tut { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
-        .tut-box { background: #111; border: 2px solid var(--accent); padding: 25px; border-radius: 25px; max-height: 60vh; overflow-y: auto; width: 100%; max-width: 400px; line-height: 1.6; }
+        /* TUTORIJAL */
+        #tut { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(10px); }
+        .tut-box { background: #111; border: 2px solid var(--accent); padding: 30px; border-radius: 30px; max-height: 70vh; overflow-y: auto; width: 100%; max-width: 450px; box-shadow: 0 0 50px rgba(0, 242, 255, 0.2); }
+        .tut-box h2 { margin-bottom: 20px; font-size: 24px; }
+        .tut-box p { line-height: 1.7; font-size: 16px; margin-bottom: 15px; color: #ccc; }
+        b { color: var(--accent); }
     </style>
 </head>
 <body>
@@ -43,12 +105,12 @@
     <div id="tut">
         <div class="tut-box">
             <h2 style="color:var(--accent)">Grammar Room</h2>
-            <p>Ispred vas se nalazi jedna vrlo neuobičajena i zanimljiva aplikacija.<br><br>
-            <b>Loci Metod:</b> Koristimo prostor sobe da zapamtite gramatiku. Vaš mozak pamti lokacije (ogledalo, vrata, sto) umesto suvoparnih pravila.<br><br>
-            <b>Pareto Zakon:</b> Učite samo onih 20% jezika koji se koriste u 80% situacija. Bez gubljenja vremena.<br><br>
-            <b>Happy Accident:</b> Slobodno klikćite. Istražujte. Dozvolite mozgu da sam poveže sliku, zvuk i značenje.</p>
+            <p>Ispred vas se nalazi jedna vrlo neuobičajena i zanimljiva aplikacija.</p>
+            <p><b>Loci Metod:</b> Mozak pamti prostor, ne pravila. Svaki komad nameštaja je sidro za gramatiku.</p>
+            <p><b>Pareto Zakon:</b> Učite samo onih 20% reči koje završavaju 80% posla u realnom svetu.</p>
+            <p><b>Happy Accident:</b> Istražujte slobodno. Dozvolite intuiciji da poveže sliku, zvuk i rečenicu.</p>
         </div>
-        <button onclick="closeTut()" style="margin-top:20px; padding:15px 40px; border-radius:30px; border:none; background:var(--accent); font-weight:bold;">KRENI</button>
+        <button onclick="closeTut()" style="margin-top:25px; padding:18px 50px; border-radius:50px; border:none; background:var(--accent); color:#000; font-weight:900; text-transform:uppercase; letter-spacing:1px; cursor:pointer;">ZAPOČNI</button>
     </div>
 
     <div class="app-container" id="room">
@@ -74,7 +136,8 @@
 
     <script>
         const baza = {
-            "p0_v0_n0_present": "Ja idem kući", "p2_v0_n0_present": "On ide kući", "p0_v1_n2_present": "Ja pravim kafu",
+            "p0_v0_n0_present": "Ja idem kući", "p1_v0_n0_present": "Ti ideš kući", "p2_v0_n0_present": "On ide kući", "p3_v0_n0_present": "Ona ide kući", "p4_v0_n0_present": "Oni idu kući",
+            "p0_v1_n2_present": "Ja pravim kafu", "p3_v1_n0_present": "Ona pravi kuću", "p0_v2_n0_present": "Ja želim kuću", "p3_v2_n0_present": "Ona želi kuću",
             "p0_v0_n0_past": "Ja sam išao kući", "p3_v0_n0_past": "Ona je išla kući", "p0_v1_n2_past": "Ja sam pravio kafu",
             "p0_v0_n0_future": "Ja ću ići kući", "p2_v0_n0_future": "On će ići kući", "p0_v1_n2_future": "Ja ću praviti kafu"
         };
@@ -124,10 +187,9 @@
                 document.getElementById('task').innerText = `ZADATAK ${score + 1}/5`;
                 document.getElementById('sr').innerText = baza[currentTarget];
                 document.getElementById('en').innerText = "???";
-                
                 if(key === currentTarget) {
                     score++;
-                    if(score >= 5) { alert("BRAVO! Završio si nivo!"); toggleExam(); }
+                    if(score >= 5) { alert("BRAVO! Savladali ste prvu sobu!"); toggleExam(); }
                     else { nextTask(); render(); }
                 }
             } else {
