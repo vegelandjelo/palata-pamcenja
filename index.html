@@ -3,23 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Grammar Room - Fixed</title>
+    <title>Grammar Room - Final Edition</title>
     <style>
         :root { --accent: #00f2ff; --success: #00ff88; --danger: #ff4444; }
         * { -webkit-tap-highlight-color: transparent; touch-action: manipulation; box-sizing: border-box; }
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; font-family: 'Segoe UI', sans-serif; color: white; }
         
-        /* TUTORIAL */
         #tutorial-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.92); backdrop-filter: blur(20px); z-index: 2000; display: flex; justify-content: center; align-items: center; transition: 0.6s ease; }
         .tutorial-card { width: 85%; max-width: 400px; padding: 40px 30px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 35px; text-align: center; }
         .tut-btn { background: var(--accent); color: black; border: none; padding: 16px 45px; border-radius: 50px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
 
-        /* KONTEJNER I POZADINA */
         .app-container { position: relative; width: 100%; height: 100vh; background-image: url('soba.jpg'); background-size: cover; background-position: center; transition: filter 0.8s ease; }
         .past-mood { filter: sepia(0.4) brightness(0.8); }
         .future-mood { filter: hue-rotate(160deg) brightness(1.1); }
         
-        /* GORNJE SEKCIJE */
         .mode-bar { position: absolute; top: 25px; width: 100%; display: flex; justify-content: center; z-index: 100; }
         .mode-toggle { padding: 8px 20px; background: var(--danger); border: none; border-radius: 20px; color: white; font-size: 10px; font-weight: bold; cursor: pointer; }
         .mode-toggle.exam-on { background: var(--success); color: #000; }
@@ -29,18 +26,16 @@
         .time-btn { padding: 8px 15px; border: none; background: transparent; color: white; border-radius: 14px; font-size: 10px; cursor: pointer; }
         .time-btn.active { background: var(--accent); color: #000; font-weight: bold; }
 
-        /* CRVENI HOTSPOTOVI - KORIGOVANE POZICIJE PREMA SLICI */
+        /* KORIGOVANE POZICIJE */
         .hotspot { position: absolute; width: 70px; height: 70px; z-index: 20; display: flex; align-items: center; justify-content: center; cursor: pointer; }
         .hotspot-circle { width: 34px; height: 34px; background: rgba(255, 68, 68, 0.2); border-radius: 50%; border: 2px solid var(--danger); animation: pulse-red 2s infinite; }
         @keyframes pulse-red { 0% { transform: scale(1); box-shadow: 0 0 10px rgba(255, 68, 68, 0.4); } 50% { transform: scale(1.15); box-shadow: 0 0 25px rgba(255, 68, 68, 0.7); } 100% { transform: scale(1); box-shadow: 0 0 10px rgba(255, 68, 68, 0.4); } }
         
-        #spot-p { top: 62%; left: 8%; } 
+        #spot-p { top: 55%; left: 8%; } /* Ogledalo podignuto */
         #spot-v { top: 38%; left: 48%; } 
         #spot-n { top: 58%; left: 80%; }
 
-        /* PANEL */
         .display-wall { position: absolute; bottom: calc(120px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); width: 92%; max-width: 440px; padding: 22px; background: rgba(0,0,0,0.85); backdrop-filter: blur(30px); border-radius: 30px; text-align: center; border: 1px solid rgba(0,242,255,0.2); z-index: 150; }
-        .instruction { font-size: 9px; color: var(--accent); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; }
         .sentence { font-size: 24px; font-weight: bold; min-height: 32px; }
         .translation-text { color: var(--success); font-size: 16px; margin-top: 10px; font-weight: 500; }
         .blurred { filter: blur(18px); opacity: 0.05; }
@@ -75,7 +70,6 @@
     <div class="app-container" id="room">
         <div id="panel" class="display-wall">
             <div class="slogan">samo prirodno</div>
-            <div id="m-text" class="instruction">ISTRAŽIVANJE</div>
             <div id="en" class="sentence">...</div>
             <div id="sr" class="translation-text">...</div>
         </div>
@@ -85,68 +79,84 @@
     </div>
 
     <script>
-        // TOTAL FLAT MAPA - Ovde upisuješ PUNU srpsku rečenicu
-        // Napomena: Moraš popuniti sve kombinacije da ne bi pisalo "Fali prevod"
         const totalBaza = {
-            "p0_v0_n0_present": "Ja idem kući",
-            "p3_v0_n0_future": "Ona će ići kući",
-            "p3_v2_n0_future": "Ona će želeti kuću",
-            "p0_v1_n2_present": "Ja pravim kafu"
-            // Nastavi niz...
+            // SADAŠNJOST (p=Osoba, v=Glagol, n=Objekat)
+            "p0_v0_n0_present": "Ja idem kući", "p0_v0_n1_present": "Ja idem u istoriju", "p0_v0_n2_present": "Ja idem na kafu",
+            "p1_v0_n0_present": "Ti ideš kući", "p1_v0_n1_present": "Ti ideš u istoriju", "p1_v0_n2_present": "Ti ideš na kafu",
+            "p2_v0_n0_present": "On ide kući", "p2_v0_n1_present": "On ide u istoriju", "p2_v0_n2_present": "On ide na kafu",
+            "p3_v0_n0_present": "Ona ide kući", "p3_v0_n1_present": "Ona ide u istoriju", "p3_v0_n2_present": "Ona ide na kafu",
+            "p4_v0_n0_present": "Oni idu kući", "p4_v0_n1_present": "Oni idu u istoriju", "p4_v0_n2_present": "Oni idu na kafu",
+            
+            "p0_v1_n0_present": "Ja pravim kuću", "p0_v1_n1_present": "Ja pravim istoriju", "p0_v1_n2_present": "Ja pravim kafu",
+            "p1_v1_n0_present": "Ti praviš kuću", "p1_v1_n1_present": "Ti praviš istoriju", "p1_v1_n2_present": "Ti praviš kafu",
+            "p2_v1_n0_present": "On pravi kuću", "p2_v1_n1_present": "On pravi istoriju", "p2_v1_n2_present": "On pravi kafu",
+            "p3_v1_n0_present": "Ona pravi kuću", "p3_v1_n1_present": "Ona pravi istoriju", "p3_v1_n2_present": "Ona pravi kafu",
+            "p4_v1_n0_present": "Oni prave kuću", "p4_v1_n1_present": "Oni prave istoriju", "p4_v1_n2_present": "Oni prave kafu",
+
+            "p0_v2_n0_present": "Ja želim kuću", "p0_v2_n1_present": "Ja želim istoriju", "p0_v2_n2_present": "Ja želim kafu",
+            "p1_v2_n0_present": "Ti želiš kuću", "p1_v2_n1_present": "Ti želiš istoriju", "p1_v2_n2_present": "Ti želiš kafu",
+            "p2_v2_n0_present": "On želi kuću", "p2_v2_n1_present": "On želi istoriju", "p2_v2_n2_present": "On želi kafu",
+            "p3_v2_n0_present": "Ona želi kuću", "p3_v2_n1_present": "Ona želi istoriju", "p3_v2_n2_present": "Ona želi kafu",
+            "p4_v2_n0_present": "Oni žele kuću", "p4_v2_n1_present": "Oni žele istoriju", "p4_v2_n2_present": "Oni žele kafu",
+
+            // PROŠLOST
+            "p0_v0_n0_past": "Ja sam išao kući", "p0_v0_n1_past": "Ja sam išao u istoriju", "p0_v0_n2_past": "Ja sam išao na kafu",
+            "p1_v0_n0_past": "Ti si išao kući", "p1_v0_n1_past": "Ti si išao u istoriju", "p1_v0_n2_past": "Ti si išao na kafu",
+            "p2_v0_n0_past": "On je išao kući", "p2_v0_n1_past": "On je išao u istoriju", "p2_v0_n2_past": "On je išao na kafu",
+            "p3_v0_n0_past": "Ona je išla kući", "p3_v0_n1_past": "Ona je išla u istoriju", "p3_v0_n2_past": "Ona je išla na kafu",
+            "p4_v0_n0_past": "Oni su išli kući", "p4_v0_n1_past": "Oni su išli u istoriju", "p4_v0_n2_past": "Oni su išli na kafu",
+
+            "p0_v1_n0_past": "Ja sam pravio kuću", "p0_v1_n1_past": "Ja sam pravio istoriju", "p0_v1_n2_past": "Ja sam pravio kafu",
+            "p1_v1_n0_past": "Ti si pravio kuću", "p1_v1_n1_past": "Ti si pravio istoriju", "p1_v1_n2_past": "Ti si pravio kafu",
+            "p2_v1_n0_past": "On je pravio kuću", "p2_v1_n1_past": "On je pravio istoriju", "p2_v1_n2_past": "On je pravio kafu",
+            "p3_v1_n0_past": "Ona je pravila kuću", "p3_v1_n1_past": "Ona je pravila istoriju", "p3_v1_n2_past": "Ona je pravila kafu",
+            "p4_v1_n0_past": "Oni su pravili kuću", "p4_v1_n1_past": "Oni su pravili istoriju", "p4_v1_n2_past": "Oni su pravili kafu",
+
+            "p0_v2_n0_past": "Ja sam želeo kuću", "p0_v2_n1_past": "Ja sam želeo istoriju", "p0_v2_n2_past": "Ja sam želeo kafu",
+            "p1_v2_n0_past": "Ti si želeo kuću", "p1_v2_n1_past": "Ti si želeo istoriju", "p1_v2_n2_past": "Ti si želeo kafu",
+            "p2_v2_n0_past": "On je želeo kuću", "p2_v2_n1_past": "On je želeo istoriju", "p2_v2_n2_past": "On je želeo kafu",
+            "p3_v2_n0_past": "Ona je želela kuću", "p3_v2_n1_past": "Ona je želela istoriju", "p3_v2_n2_past": "Ona je želela kafu",
+            "p4_v2_n0_past": "Oni su želeli kuću", "p4_v2_n1_past": "Oni su želeli istoriju", "p4_v2_n2_past": "Oni su želeli kafu",
+
+            // BUDUĆNOST
+            "p0_v0_n0_future": "Ja ću ići kući", "p0_v0_n1_future": "Ja ću ići u istoriju", "p0_v0_n2_future": "Ja ću ići na kafu",
+            "p1_v0_n0_future": "Ti ćeš ići kući", "p1_v0_n1_future": "Ti ćeš ići u istoriju", "p1_v0_n2_future": "Ti ćeš ići na kafu",
+            "p2_v0_n0_future": "On će ići kući", "p2_v0_n1_future": "On će ići u istoriju", "p2_v0_n2_future": "On će ići na kafu",
+            "p3_v0_n0_future": "Ona će ići kući", "p3_v0_n1_future": "Ona će ići u istoriju", "p3_v0_n2_future": "Ona će ići na kafu",
+            "p4_v0_n0_future": "Oni će ići kući", "p4_v0_n1_future": "Oni će ići u istoriju", "p4_v0_n2_future": "Oni će ići na kafu",
+
+            "p0_v1_n0_future": "Ja ću praviti kuću", "p0_v1_n1_future": "Ja ću praviti istoriju", "p0_v1_n2_future": "Ja ću praviti kafu",
+            "p1_v1_n0_future": "Ti ćeš praviti kuću", "p1_v1_n1_future": "Ti ćeš praviti istoriju", "p1_v1_n2_future": "Ti ćeš praviti kafu",
+            "p2_v1_n0_future": "On će praviti kuću", "p2_v1_n1_future": "On će praviti istoriju", "p2_v1_n2_future": "On će praviti kafu",
+            "p3_v1_n0_future": "Ona će praviti kuću", "p3_v1_n1_future": "Ona će praviti istoriju", "p3_v1_n2_future": "Ona će praviti kafu",
+            "p4_v1_n0_future": "Oni će praviti kuću", "p4_v1_n1_future": "Oni će praviti istoriju", "p4_v1_n2_future": "Oni će praviti kafu",
+
+            "p0_v2_n0_future": "Ja ću želeti kuću", "p0_v2_n1_future": "Ja ću želeti istoriju", "p0_v2_n2_future": "Ja ću želeti kafu",
+            "p1_v2_n0_future": "Ti ćeš želeti kuću", "p1_v2_n1_future": "Ti ćeš želeti istoriju", "p1_v2_n2_future": "Ti ćeš želeti kafu",
+            "p2_v2_n0_future": "On će želeti kuću", "p2_v2_n1_future": "On će želeti istoriju", "p2_v2_n2_future": "On će želeti kafu",
+            "p3_v2_n0_future": "Ona će želeti kuću", "p3_v2_n1_future": "Ona će želeti istoriju", "p3_v2_n2_future": "Ona će želeti kafu",
+            "p4_v2_n0_future": "Oni će želeti kuću", "p4_v2_n1_future": "Oni će želeti istoriju", "p4_v2_n2_future": "Oni će želeti kafu",
         };
 
         let state = { p:0, v:0, n:0, time:'present' }, isExam = false;
 
-        function nextStep() {
-            document.getElementById('step-1').classList.add('hidden');
-            setTimeout(() => {
-                document.getElementById('step-1').style.display = 'none';
-                document.getElementById('step-2').classList.remove('hidden');
-            }, 300);
-        }
-
-        function finishTutorial() {
-            document.getElementById('tutorial-overlay').style.opacity = '0';
-            setTimeout(() => { document.getElementById('tutorial-overlay').style.display = 'none'; }, 600);
-        }
-
-        function toggleExam() {
-            isExam = !isExam;
-            document.getElementById('exam-toggle').innerText = isExam ? "ISPIT: UKLJUČEN" : "ISPIT: ISKLJUČEN";
-            document.getElementById('exam-toggle').classList.toggle('exam-on');
-            render();
-        }
-
-        function setTime(t) {
-            state.time = t;
-            document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById('btn-' + t).classList.add('active');
-            document.getElementById('room').className = 'app-container ' + (t === 'past' ? 'past-mood' : t === 'future' ? 'future-mood' : '');
-            render();
-        }
-
-        function tap(k) { 
-            state[k] = (state[k] + 1) % (k === 'p' ? 5 : 3); 
-            render(); 
-        }
+        function nextStep() { document.getElementById('step-1').classList.add('hidden'); setTimeout(() => { document.getElementById('step-1').style.display = 'none'; document.getElementById('step-2').classList.remove('hidden'); }, 300); }
+        function finishTutorial() { document.getElementById('tutorial-overlay').style.opacity = '0'; setTimeout(() => { document.getElementById('tutorial-overlay').style.display = 'none'; }, 600); }
+        function toggleExam() { isExam = !isExam; document.getElementById('exam-toggle').innerText = isExam ? "ISPIT: UKLJUČEN" : "ISPIT: ISKLJUČEN"; document.getElementById('exam-toggle').classList.toggle('exam-on'); render(); }
+        function setTime(t) { state.time = t; document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active')); document.getElementById('btn-' + t).classList.add('active'); document.getElementById('room').className = 'app-container ' + (t === 'past' ? 'past-mood' : t === 'future' ? 'future-mood' : ''); render(); }
+        function tap(k) { state[k] = (state[k] + 1) % (k === 'p' ? 5 : 3); render(); }
 
         function render() {
             let key = `p${state.p}_v${state.v}_n${state.n}_${state.time}`;
-            let srS = totalBaza[key] || "Fali prevod (" + key + ")";
-            
+            let srS = totalBaza[key] || "Fali prevod";
             let enS = generateEnglish(state.p, state.v, state.n, state.time);
-
             document.getElementById('en').innerText = enS;
             document.getElementById('sr').innerText = isExam ? "???" : srS;
-            
             if (!isExam) {
                 document.getElementById('en').classList.remove('blurred');
-                // Glasovna sinteza (opciono, možeš obrisati ako koči)
                 window.speechSynthesis.cancel();
                 let u = new SpeechSynthesisUtterance(enS); u.lang='en-US'; window.speechSynthesis.speak(u);
-            } else {
-                document.getElementById('en').classList.add('blurred');
-            }
+            } else { document.getElementById('en').classList.add('blurred'); }
         }
 
         function generateEnglish(p, v, n, t) {
@@ -160,8 +170,6 @@
             } else if(t === 'past') return `${en_p[p]} ${en_v[v].past} ${en_n[n]}`;
             else return `${en_p[p]} will ${en_v[v].p} ${en_n[n]}`;
         }
-
-        // Pokreni početni render
         window.onload = render;
     </script>
 </body>
